@@ -9,14 +9,14 @@ import "firebase/auth";
 import "firebase/firestore";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCEZkN7o1_ZLZ59cbb-9oe1XZtrnEC7iDY",
-  authDomain: "simple-chat-875d9.firebaseapp.com",
-  databaseURL: "https://simple-chat-875d9.firebaseio.com",
-  projectId: "simple-chat-875d9",
-  storageBucket: "simple-chat-875d9.appspot.com",
-  messagingSenderId: "51457124671",
-  appId: "1:51457124671:web:1e2827b2e02293df318b8a",
-  measurementId: "G-PZQMFM9KR1"
+  apiKey: process.env.S_CHAT_API_KEY,
+  authDomain: process.env.S_CHAT_AUTH_DOMAIN,
+  databaseURL: process.env.S_CHAT_DATABASE_URL,
+  projectId: process.env.S_CHAT_PROJECT_ID,
+  storageBucket: process.env.S_CHAT_STORAGE_BUCKET,
+  messagingSenderId: process.env.S_CHAT_MESSAGING_SENDER_ID,
+  appId: process.env.S_CHAT_APP_ID,
+  measurementId: process.env.S_CHAT_MEASUREMENT_ID
 };
 
 firebase.initializeApp(firebaseConfig);
