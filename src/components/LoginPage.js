@@ -2,9 +2,11 @@ import React, { useState } from 'react';
 import firebase from '../firebase';
 
 function LoginPage() {
-  const [userName, setUserName] = useState("");
+  const [userName, setUserName] = useState("evgen");
+  const [userGroupList, setUserGroupList] = useState([]);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+
   const addNewUser = (e) => {
     e.preventDefault()
     if (name.length && email.length) {
@@ -13,7 +15,13 @@ function LoginPage() {
         email,
         groupIdList: []
       })
-    }
+    } else {alert('Incorrect data')}
+  }
+
+  const updateUserGroupList = gl => {
+    setUserGroupList(gl);
+    console.log('ugl', userGroupList)
+
   }
 
   const loadUserPage = async (e) => {
@@ -22,10 +30,9 @@ function LoginPage() {
     await firebase.firestore().collection('users').where('name', '==', userName).get()
       .then(function(querySnapshot) {
         querySnapshot.forEach(function(doc) {
-          // doc.data() is never undefined for query doc snapshots
-          // console.log(doc.id, " => ", doc.data());
           uList = doc.data()
       })})
+    updateUserGroupList(uList.groupIdList)
     console.log(uList)
   }
 
@@ -46,8 +53,8 @@ function LoginPage() {
       <div className="Register-form">
         <h3>Add new user: </h3>
         <form name="register" onSubmit={addNewUser}>
-          <input name="newUserName" placeholder="Enter your name" onChange={e => setName(e.target.value)}/>
-          <input name="newUserEmail" placeholder="Enter your email" onChange={e => setEmail(e.target.value)}/>
+          <input type="text" name="newUserName" placeholder="Enter your name" onChange={e => setName(e.target.value)}/>
+          <input type="email" name="newUserEmail" placeholder="Enter your email" onChange={e => setEmail(e.target.value)}/>
           <button type="submit">Add new user</button>
         </form>
       </div>
