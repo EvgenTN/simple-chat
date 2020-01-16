@@ -2,6 +2,7 @@ import React, { useState} from 'react';
 import './App.css';
 import firebase from './firebase';
 
+import LoginPage from './components/LoginPage';
 // firebase.firestore().collection('users').add({
 //   name: "Yehor",
 //   email: "yehor@gmail.com",
@@ -47,21 +48,21 @@ function App() {
       })
   }
 
-  const getU = async () => {
-    let uList;
-    await firebase.firestore().collection('users').where('email', '==', 'evgen@gmail.com').get()
-      .then(function(querySnapshot) {
-        querySnapshot.forEach(function(doc) {
-          // doc.data() is never undefined for query doc snapshots
-          // console.log(doc.id, " => ", doc.data());
-          uList = doc.data()
-      })})
-    console.log(uList)
-  }
+  // const getU = async () => {
+  //   let uList;
+  //   await firebase.firestore().collection('users').where('email', '==', 'evgen@gmail.com').get()
+  //     .then(function(querySnapshot) {
+  //       querySnapshot.forEach(function(doc) {
+  //         // doc.data() is never undefined for query doc snapshots
+  //         // console.log(doc.id, " => ", doc.data());
+  //         uList = doc.data()
+  //     })})
+  //   console.log(uList)
+  // }
 
   return (
     <div className="App">
-      <header className="App-header">
+      {/* <header className="App-header">
         <form onSubmit={addUser}>
           <input id="uName" placeholder="user name" onChange={e => setName(e.target.value)}/>
           <button type="submit">Add User</button>
@@ -75,7 +76,8 @@ function App() {
           <button type="submit">Add Message</button>
         </form>
         <button onClick={getU}>Get user</button>
-      </header>
+      </header> */}
+      <LoginPage />
     </div>
   );
 }
