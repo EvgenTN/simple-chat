@@ -3,6 +3,7 @@ import firebase from '../firebase';
 
 function LoginPage() {
   const [userName, setUserName] = useState("evgen");
+  const [userGroupListId, setUserGroupListId] = useState([]);
   const [userGroupList, setUserGroupList] = useState([]);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -18,11 +19,28 @@ function LoginPage() {
     } else {alert('Incorrect data')}
   }
 
+  const updateUserGroupListId = glid => {
+    setUserGroupListId(glid);
+    // console.log('ugl', userGroupList)
+  }
   const updateUserGroupList = gl => {
     setUserGroupList(gl);
     console.log('ugl', userGroupList)
-
   }
+
+  const loadUserGrops = async () => {
+    userGroupListId.map(id => {
+      let gList
+      let docRef = firebase.firestore().collection('groups').doc(id)
+      docRef.get().then(function(doc) {
+        console.log('dd', doc.data())
+        gList = doc.data()
+      })
+      updateUserGroupList(gList)
+      return gList
+    })
+    // updateUserGroupList()
+    } 
 
   const loadUserPage = async (e) => {
     e.preventDefault()
@@ -32,8 +50,9 @@ function LoginPage() {
         querySnapshot.forEach(function(doc) {
           uList = doc.data()
       })})
-    updateUserGroupList(uList.groupIdList)
-    console.log(uList)
+    updateUserGroupListId(uList.groupIdList)
+    // loadUserGrops(uList.groupIdList)
+    // console.log(uList)
   }
 
   return (
@@ -49,6 +68,9 @@ function LoginPage() {
           <button type="submit">Login</button>
         </form>
       </div>
+      {userGroupListId}
+      <button onClick={loadUserGrops}>show group</button>
+      {userGroupList}
       <hr></hr>
       <div className="Register-form">
         <h3>Add new user: </h3>

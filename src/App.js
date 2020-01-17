@@ -41,11 +41,11 @@ function App() {
     })
     // console.log(groupId)
     firebase.firestore().collection('messages').add({
-        text: message,
-        createdAt: new Date(),
-        groupId,
-        userId
-      })
+      text: message,
+      createdAt: new Date(),
+      groupId,
+      userId
+    })
   }
 
   // const getU = async () => {
