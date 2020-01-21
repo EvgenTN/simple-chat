@@ -15,7 +15,9 @@ export const AuthPage = () => {
 
   const submit = (e) => {
     e.preventDefault()
-    loadGroupList(selectedUser.groupIdList)
+    // const list = users.find(user => user.id === selectedUser)
+    // console.log('su', users.find(user => user.id === selectedUser))
+    loadGroupList(users.find(user => user.id === selectedUser).groupIdList)
   }
 
   return (
