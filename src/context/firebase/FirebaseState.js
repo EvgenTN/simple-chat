@@ -2,9 +2,9 @@ import React, { useReducer } from 'react'
 import firebase from '../../firebase'
 import { FirebaseContext } from './firebaseContext'
 import { firebaseReducer } from './firebaseReducer'
-import { FETCH_USERS } from '../types'
+import { FETCH_USERS, ADD_USER } from '../types'
 
-export const FirebaseState = ({children}) => {
+export const FirebaseState = ({ children }) => {
   const initialState = {
     users: []
   }
@@ -17,13 +17,31 @@ export const FirebaseState = ({children}) => {
         id: doc.id,
         ...doc.data()
       }))
-      dispatch({type: FETCH_USERS, payload})
+
+      dispatch({ type: FETCH_USERS, payload })
     })
+  }
+
+  const addUser = async (name, email) => {
+    firebase
+      .firestore()
+      .collection('users')
+      .add({
+        name,
+        email,
+        groupIdList: []
+      })
+    // .then(payload => dispatch({ type: ADD_USER, payload }));
+
+
+
+
   }
 
   return (
     <FirebaseContext.Provider value={{
       fetchUsers,
+      addUser,
       users: state.users
     }}>
       {children}
