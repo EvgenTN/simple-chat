@@ -1,23 +1,12 @@
 import React, { useState } from 'react';
 import firebase from '../firebase';
+import { RegisterForm } from './RegisterForm';
 
 function LoginPage() {
   const [userName, setUserName] = useState("evgen");
   const [userGroupListId, setUserGroupListId] = useState([]);
   const [userGroupList, setUserGroupList] = useState([]);
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-
-  const addNewUser = (e) => {
-    e.preventDefault()
-    if (name.length && email.length) {
-      firebase.firestore().collection('users').add({
-        name,
-        email,
-        groupIdList: []
-      })
-    } else {alert('Incorrect data')}
-  }
+  
 
   const updateUserGroupListId = glid => {
     setUserGroupListId(glid);
@@ -72,14 +61,7 @@ function LoginPage() {
       <button onClick={loadUserGrops}>show group</button>
       {userGroupList}
       <hr></hr>
-      <div className="Register-form">
-        <h3>Add new user: </h3>
-        <form name="register" onSubmit={addNewUser}>
-          <input type="text" name="newUserName" placeholder="Enter your name" onChange={e => setName(e.target.value)}/>
-          <input type="email" name="newUserEmail" placeholder="Enter your email" onChange={e => setEmail(e.target.value)}/>
-          <button type="submit">Add new user</button>
-        </form>
-      </div>
+      <RegisterForm />
     </div>    
   )
 }
