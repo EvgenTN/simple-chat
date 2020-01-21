@@ -2,11 +2,12 @@ import React, { useReducer } from 'react'
 import firebase from '../../firebase'
 import { FirebaseContext } from './firebaseContext'
 import { firebaseReducer } from './firebaseReducer'
-import { FETCH_USERS, ADD_USER } from '../types'
+import { FETCH_USERS, ADD_USER, ADD_GROUP } from '../types'
 
 export const FirebaseState = ({ children }) => {
   const initialState = {
-    users: []
+    users: [],
+    groupsList: []
   }
 
   const [state, dispatch] = useReducer(firebaseReducer, initialState)
@@ -31,18 +32,24 @@ export const FirebaseState = ({ children }) => {
         email,
         groupIdList: []
       })
-    // .then(payload => dispatch({ type: ADD_USER, payload }));
+  }
 
-
-
-
+  const loadGroupList = (gListIds) => {
+    gListIds.forEach(i => {
+      firebase.firestore().collection('groups').doc(i).onSnapshot({
+        includeMetadataChanges: true
+      }, doc => {
+        const payload = doc
+        dispatch({ type: ADD_GROUP, payload })
+      })
+    })
   }
 
   return (
     <FirebaseContext.Provider value={{
-      fetchUsers,
-      addUser,
-      users: state.users
+      fetchUsers, addUser, loadGroupList,
+      users: state.users,
+      groupsList: state.groupsList
     }}>
       {children}
     </FirebaseContext.Provider>
