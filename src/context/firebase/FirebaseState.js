@@ -12,12 +12,12 @@ export const FirebaseState = ({children}) => {
   const [state, dispatch] = useReducer(firebaseReducer, initialState)
 
   const fetchUsers = () => {
-    firebase.fireStore().collection('users').onSnapshot((snapshot) => {
-      const newUsers = snapshot.docs.map(doc => ({
+    firebase.firestore().collection('users').onSnapshot((snapshot) => {
+      const payload = snapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data()
       }))
-      dispatch({types: FETCH_USERS, newUsers})
+      dispatch({type: FETCH_USERS, payload})
     })
   }
 

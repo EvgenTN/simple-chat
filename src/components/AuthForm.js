@@ -6,34 +6,19 @@ export const AuthPage = () => {
   const [userName, setUserName] = useState("evgen");
   const { users, fetchUsers } = useContext(FirebaseContext)
 
-  useEffect(_ => { fetchUsers() }, []);
-  // const [userGroupListId, setUserGroupListId] = useState([]);
-  // const [userGroupList, setUserGroupList] = useState([]);
-
-
-  // const users = [
-  //   { name: 'Evgen', id: '0' },
-  //   { name: 'Yehor', id: '1' },
-  // ]
-
-
-  // const updateUserGroupListId = glid => {
-  //   setUserGroupListId(glid);
-  // console.log('ugl', userGroupList)
-  // }
-  // const updateUserGroupList = gl => {
-  //   setUserGroupList(gl);
-  //   console.log('ugl', userGroupList)
-  // }
+  useEffect(() => { 
+    fetchUsers()
+    // eslint-disable-next-line
+  }, []);
 
   return (
     <div className="Login-form">
       <h3>Who are you? </h3>
       <form name="login" >
         <select placeholder="Select user" onChange={e => setUserName(e.target.value)} name="uName" >
-          <option></option>
+          <option>Select User</option>
           {
-            users.map(i => (<option value={i.id}>{i.name}</option>))
+            users && users.map(i => (<option value={i.id} key={i.id}>{i.name}</option>))
           }
         </select>
         <button type="submit">Login</button>

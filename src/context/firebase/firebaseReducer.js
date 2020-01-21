@@ -5,7 +5,7 @@ const handlers = {
     ...state,
     users: [...state.users, payload]
   }),
-  [FETCH_USERS]: (state, payload) => ({...state, users: payload }),
+  [FETCH_USERS]: (state, {payload}) => ({...state, users: payload }),
   DEFAULT: state => state
 }
 
