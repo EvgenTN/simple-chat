@@ -6,8 +6,6 @@ export const AuthPage = () => {
   const [selectedUser, setSelectedUser] = useState({});
   const { users, fetchUsers, loadGroupList } = useContext(FirebaseContext)
 
-  console.log('users', users)
-
   useEffect(() => { 
     fetchUsers()
     // eslint-disable-next-line

@@ -2,7 +2,7 @@ import React, { useReducer } from 'react'
 import firebase from '../../firebase'
 import { FirebaseContext } from './firebaseContext'
 import { firebaseReducer } from './firebaseReducer'
-import { FETCH_USERS, ADD_USER, ADD_GROUP, FETCH_GROUPS } from '../types'
+import { FETCH_USERS, ADD_USER, ADD_GROUP, FETCH_GROUPS, CLEAR_GROUPS } from '../types'
 
 export const FirebaseState = ({ children }) => {
   const initialState = {
@@ -35,12 +35,11 @@ export const FirebaseState = ({ children }) => {
   }
 
   const loadGroupList = (gListIds) => {
+    dispatch({type: CLEAR_GROUPS})
     gListIds.forEach(i => {
-      console.log('i', i)
       firebase.firestore().collection('groups').doc(i).onSnapshot({
-        includeMetadataChanges: true
+        includeMetadataChanges: false
       }, doc => {
-        console.log('dd', doc.data())
         const payload = {
           id: doc.id,
           ...doc.data()

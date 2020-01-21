@@ -7,7 +7,6 @@ export const GroupsList = () => {
   // const groupsList = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
   //   .map(i => { return { id: 'id' + i, name: 'group' + i, lastMessage: 'msg' + i } })
 
-  console.log('gl', groupsList)
   const selectGroup = (id) => {
     console.log(id);
   }
