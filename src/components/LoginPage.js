@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import firebase from '../firebase';
 import { RegisterForm } from './RegisterForm';
+import { AuthPage } from './AuthForm';
 
 function LoginPage() {
   const [userName, setUserName] = useState("evgen");
@@ -21,7 +22,7 @@ function LoginPage() {
     userGroupListId.map(id => {
       let gList
       let docRef = firebase.firestore().collection('groups').doc(id)
-      docRef.get().then(function(doc) {
+      docRef.get().then(function (doc) {
         console.log('dd', doc.data())
         gList = doc.data()
       })
@@ -29,16 +30,17 @@ function LoginPage() {
       return gList
     })
     // updateUserGroupList()
-    } 
+  }
 
   const loadUserPage = async (e) => {
     e.preventDefault()
     let uList;
     await firebase.firestore().collection('users').where('name', '==', userName).get()
-      .then(function(querySnapshot) {
-        querySnapshot.forEach(function(doc) {
+      .then(function (querySnapshot) {
+        querySnapshot.forEach(function (doc) {
           uList = doc.data()
-      })})
+        })
+      })
     updateUserGroupListId(uList.groupIdList)
     // loadUserGrops(uList.groupIdList)
     // console.log(uList)
@@ -46,7 +48,8 @@ function LoginPage() {
 
   return (
     <div className="Login-page">
-      <div className="Login-form">
+
+      {/* <div className="Login-form">
         <h3>Who are you? </h3>
         <form name="login" onSubmit={loadUserPage}>
           <select placeholder="Select user" onChange={e => setUserName(e.target.value)} name="uName" >
@@ -56,7 +59,9 @@ function LoginPage() {
           </select>
           <button type="submit">Login</button>
         </form>
-      </div>
+      </div> */}
+      <AuthPage />
+
       {userGroupListId}
       <button onClick={loadUserGrops}>show group</button>
       {userGroupList}
