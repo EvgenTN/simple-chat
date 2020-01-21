@@ -1,26 +1,22 @@
-import React, { useState } from 'react';
-import firebase from '../firebase';
+import React, { useState, useContext, useEffect } from 'react';
+import { FirebaseContext } from '../context/firebase/firebaseContext';
 
 export const AuthPage = () => {
 
   const [userName, setUserName] = useState("evgen");
+  const { users, fetchUsers } = useContext(FirebaseContext)
+
+  useEffect(_ => { fetchUsers() }, []);
   // const [userGroupListId, setUserGroupListId] = useState([]);
   // const [userGroupList, setUserGroupList] = useState([]);
 
-  const loadUserPage = async (e) => {    
-    e.preventDefault()
-    let uList;
 
-    await firebase.firestore().collection('users').where('name', '==', userName).get()
-      .then(function (querySnapshot) {
-        querySnapshot.forEach(function (doc) {
-          uList = doc.data()
-        })
-      })
-    // updateUserGroupListId(uList.groupIdList)
-    // loadUserGrops(uList.groupIdList)
-    // console.log(uList)
-  }
+  // const users = [
+  //   { name: 'Evgen', id: '0' },
+  //   { name: 'Yehor', id: '1' },
+  // ]
+
+
   // const updateUserGroupListId = glid => {
   //   setUserGroupListId(glid);
   // console.log('ugl', userGroupList)
@@ -30,15 +26,15 @@ export const AuthPage = () => {
   //   console.log('ugl', userGroupList)
   // }
 
-
   return (
     <div className="Login-form">
       <h3>Who are you? </h3>
-      <form name="login" onSubmit={loadUserPage}>
+      <form name="login" >
         <select placeholder="Select user" onChange={e => setUserName(e.target.value)} name="uName" >
-          <option value="evgen" >evgen</option>
-          <option value="yehor">yehor</option>
-          <option value="third user">third user</option>
+          <option></option>
+          {
+            users.map(i => (<option value={i.id}>{i.name}</option>))
+          }
         </select>
         <button type="submit">Login</button>
       </form>

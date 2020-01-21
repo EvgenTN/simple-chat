@@ -1,5 +1,5 @@
 import React, { useReducer } from 'react'
-import firebase from '../firebase'
+import firebase from '../../firebase'
 import { FirebaseContext } from './firebaseContext'
 import { firebaseReducer } from './firebaseReducer'
 import { FETCH_USERS } from '../types'

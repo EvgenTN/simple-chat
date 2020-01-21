@@ -13,7 +13,7 @@ export const RegisterForm = () => {
         email,
         groupIdList: []
       })
-    } else {alert('Incorrect data')}
+    } else { alert('Incorrect data') }
   }
   return (
     <div className="Register-form">

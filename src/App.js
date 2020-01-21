@@ -1,8 +1,9 @@
-import React, { useState} from 'react';
+import React, { useState } from 'react';
 import './App.css';
 import firebase from './firebase';
 
 import LoginPage from './components/LoginPage';
+import { FirebaseState } from './context/firebase/FirebaseState';
 // firebase.firestore().collection('users').add({
 //   name: "Yehor",
 //   email: "yehor@gmail.com",
@@ -17,16 +18,16 @@ function App() {
   const addUser = (e) => {
     e.preventDefault()
     firebase.firestore().collection('users').add({
-        name,
-        email: "yehor@gmail.com",
-        groupIdList: []
-      })
+      name,
+      email: "yehor@gmail.com",
+      groupIdList: []
+    })
   }
   const addGroup = (e) => {
     e.preventDefault()
     firebase.firestore().collection('groups').add({
-        name: group,
-      })
+      name: group,
+    })
   }
 
   const addMessage = async (e) => {
@@ -61,8 +62,9 @@ function App() {
   // }
 
   return (
-    <div className="App">
-      {/* <header className="App-header">
+    <FirebaseState>
+      <div className="App">
+        {/* <header className="App-header">
         <form onSubmit={addUser}>
           <input id="uName" placeholder="user name" onChange={e => setName(e.target.value)}/>
           <button type="submit">Add User</button>
@@ -77,8 +79,10 @@ function App() {
         </form>
         <button onClick={getU}>Get user</button>
       </header> */}
-      <LoginPage />
-    </div>
+        <LoginPage />
+      </div>
+    </FirebaseState>
+
   );
 }
 
