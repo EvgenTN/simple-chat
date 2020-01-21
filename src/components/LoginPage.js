@@ -2,12 +2,13 @@ import React, { useState } from 'react';
 import firebase from '../firebase';
 import { RegisterForm } from './RegisterForm';
 import { AuthPage } from './AuthForm';
+import { GroupsList } from './GroupsList';
 
 function LoginPage() {
   const [userName, setUserName] = useState("evgen");
   const [userGroupListId, setUserGroupListId] = useState([]);
   const [userGroupList, setUserGroupList] = useState([]);
-  
+
 
   const updateUserGroupListId = glid => {
     setUserGroupListId(glid);
@@ -67,7 +68,8 @@ function LoginPage() {
       {userGroupList}
       <hr></hr>
       <RegisterForm />
-    </div>    
+      <GroupsList />
+    </div>
   )
 }
 
