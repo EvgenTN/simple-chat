@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react'
-import { FirebaseContext } from '../context/firebase/firebaseContext';
+import { FirebaseContext } from '../../context/firebase/firebaseContext';
 
 export const RegisterForm = () => {
   const [name, setName] = useState("");

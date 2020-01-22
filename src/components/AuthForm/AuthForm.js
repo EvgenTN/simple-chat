@@ -1,10 +1,10 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { FirebaseContext } from '../context/firebase/firebaseContext';
+import { FirebaseContext } from '../../context/firebase/firebaseContext';
 
-export const AuthPage = () => {
+export const AuthForm = () => {
 
   const [selectedUser, setSelectedUser] = useState({});
-  const { users, fetchUsers, loadGroupList } = useContext(FirebaseContext)
+  const { users, fetchUsers, loadGroupList, selectUser } = useContext(FirebaseContext)
 
   useEffect(() => { 
     fetchUsers()
@@ -13,6 +13,7 @@ export const AuthPage = () => {
 
   const submit = (e) => {
     e.preventDefault()
+    selectUser(users.find(user => user.id === selectedUser))
     // const list = users.find(user => user.id === selectedUser)
     // console.log('su', users.find(user => user.id === selectedUser))
     loadGroupList(users.find(user => user.id === selectedUser).groupIdList)

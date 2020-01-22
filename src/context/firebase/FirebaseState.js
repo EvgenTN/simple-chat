@@ -2,12 +2,14 @@ import React, { useReducer } from 'react'
 import firebase from '../../firebase'
 import { FirebaseContext } from './firebaseContext'
 import { firebaseReducer } from './firebaseReducer'
-import { FETCH_USERS, ADD_USER, ADD_GROUP, FETCH_GROUPS, CLEAR_GROUPS } from '../types'
+import { FETCH_USERS, ADD_GROUP, CLEAR_GROUPS, FETCH_MESSAGES, SELECT_USER } from '../types'
 
 export const FirebaseState = ({ children }) => {
   const initialState = {
     users: [],
-    groupsList: []
+    groupsList: [],
+    messages: [],
+    currentUser: {}
   }
 
   const [state, dispatch] = useReducer(firebaseReducer, initialState)
@@ -49,11 +51,33 @@ export const FirebaseState = ({ children }) => {
     })
   }
 
+  const selectUser = (payload) => {
+    dispatch({type: SELECT_USER, payload})
+  }
+
+  const fetchMessages = (groupId) => {
+    firebase.firestore().collection('messages').where('groupId', '==', groupId)
+    .onSnapshot(function(querySnapshot) {
+      const payload = []
+      querySnapshot.forEach(function(doc) {
+        payload.push({
+          id: doc.id,
+          ...doc.data()
+        });
+      });
+      
+      dispatch({type: FETCH_MESSAGES, payload})
+      // console.log("messes", payload);
+    });
+  }
+
   return (
     <FirebaseContext.Provider value={{
-      fetchUsers, addUser, loadGroupList,
+      fetchUsers, addUser, loadGroupList, fetchMessages, selectUser,
       users: state.users,
-      groupsList: state.groupsList
+      groupsList: state.groupsList,
+      messages: state.messages,
+      currentUser: state.currentUser
     }}>
       {children}
     </FirebaseContext.Provider>
