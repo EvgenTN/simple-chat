@@ -9,7 +9,7 @@ export const FirebaseState = ({ children }) => {
     users: [],
     groupsList: [],
     messages: [],
-    currentUser: {},
+    // currentUser: {},
     currentGroup: {}
   }
 
@@ -52,9 +52,9 @@ export const FirebaseState = ({ children }) => {
     })
   }
 
-  const selectUser = (payload) => {
-    dispatch({type: SELECT_USER, payload})
-  }
+  // const selectUser = (payload) => {
+  //   dispatch({type: SELECT_USER, payload})
+  // }
 
   const selectGroup = (payload) => {
     dispatch({type: SELECT_GROUP, payload})
@@ -91,11 +91,11 @@ export const FirebaseState = ({ children }) => {
 
   return (
     <FirebaseContext.Provider value={{
-      fetchUsers, addUser, loadGroupList, fetchMessages, selectUser, selectGroup, addMessage,
+      fetchUsers, addUser, loadGroupList, fetchMessages, selectGroup, addMessage,
       users: state.users,
       groupsList: state.groupsList,
       messages: state.messages,
-      currentUser: state.currentUser,
+      // currentUser: state.currentUser,
       currentGroup: state.currentGroup
     }}>
       {children}

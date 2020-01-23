@@ -10,7 +10,6 @@ export const GroupsList = () => {
   const selectGroupFromList = (id) => {
     fetchMessages(id)
     selectGroup(groupsList.find(group => group.id === id))
-    console.log(id);
   }
 
 
