@@ -5,9 +5,9 @@ import { FirebaseContext } from '../../context/firebase/firebaseContext'
 
 export const MessageBoard = () => {
 
-  const { messages, currentUser } = useContext(FirebaseContext)
+  const { messages, currentUserInfo } = useContext(FirebaseContext)
 
-  // console.log('user', currentUser)
+  // console.log('user', currentUserInfo)
 
   if (messages.length ===0) {
     return null

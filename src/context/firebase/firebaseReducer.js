@@ -6,7 +6,7 @@ const handlers = {
   [ADD_GROUP]: (state, {payload}) => ({...state, groupsList: [...state.groupsList, payload]}),
   [CLEAR_GROUPS]: (state) => ({...state, groupsList: []}),
   [FETCH_MESSAGES]: (state, {payload}) => ({...state, messages: payload}),
-  [SELECT_USER]: (state, {payload}) => ({...state, currentUser: payload}),
+  [SELECT_USER]: (state, {payload}) => ({...state, currentUserInfo: payload}),
   [SELECT_GROUP]: (state, {payload}) => ({...state, currentGroup: payload}),
   DEFAULT: state => state
 }

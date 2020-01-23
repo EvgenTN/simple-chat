@@ -1,14 +1,14 @@
 import React, { useState, useContext, useEffect } from 'react';
-// import { FirebaseContext } from '../../context/firebase/firebaseContext';
+import { FirebaseContext } from '../../context/firebase/firebaseContext';
 import { AuthContext } from '../../context/auth/authContext';
 
 export const AuthForm = () => {
 
   // const [selectedUser, setSelectedUser] = useState({});
-  // const { users, fetchUsers, loadGroupList } = useContext(FirebaseContext)
+  const { loadGroupList, currenUserInfo } = useContext(FirebaseContext)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const { login } = useContext(AuthContext)
+  const { signIn } = useContext(AuthContext)
 
   // useEffect(() => { 
   //   const unsubscribe = fetchUsers()
@@ -18,14 +18,11 @@ export const AuthForm = () => {
 
   const handleLogin = (e) => {
     e.preventDefault()
-    const payload = {
-      email, password
-    }
-    login(payload)
-    // selectUser(users.find(user => user.id === selectedUser))
+    signIn({email, password}).then(() => {
+      loadGroupList(currenUserInfo.groupIdList)
+    })
     // const list = users.find(user => user.id === selectedUser)
     // console.log('su', users.find(user => user.id === selectedUser))
-    // loadGroupList(users.find(user => user.id === selectedUser).groupIdList)
   }
 
   return (

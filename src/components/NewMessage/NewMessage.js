@@ -3,7 +3,7 @@ import { FirebaseContext } from '../../context/firebase/firebaseContext'
 
 export const NewMessage = () => {
   const [newMessage, setNewMessage] = useState('')
-  const { currentGroup, currentUser, addMessage } = useContext(FirebaseContext)
+  const { currentGroup, currentUser, currentUserInfo, addMessage } = useContext(FirebaseContext)
 
   if(!currentGroup.id) {
     return null
@@ -14,8 +14,8 @@ export const NewMessage = () => {
     const payload = {
       text: newMessage,
       groupId: currentGroup.id,
-      userId: currentUser.id,
-      userName: currentUser.name
+      userId: currentUserInfo.id,
+      userName: currentUser.displayName
     }
     addMessage(payload)
   } 
