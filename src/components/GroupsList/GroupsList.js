@@ -2,14 +2,16 @@ import { FirebaseContext } from "../../context/firebase/firebaseContext"
 import React, { useContext } from "react"
 
 export const GroupsList = () => {
-  const { groupsList, fetchMessages } = useContext(FirebaseContext)
+  const { groupsList, fetchMessages, selectGroup } = useContext(FirebaseContext)
 
   // const groupsList = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
   //   .map(i => { return { id: 'id' + i, name: 'group' + i, lastMessage: 'msg' + i } })
 
-  // const selectGroup = (id) => {
-  //   console.log(id);
-  // }
+  const selectGroupFromList = (id) => {
+    fetchMessages(id)
+    selectGroup(groupsList.find(group => group.id === id))
+    console.log(id);
+  }
 
 
   return (
@@ -17,7 +19,7 @@ export const GroupsList = () => {
       {
         groupsList.map(i => {
           return (
-            <p key={i.id} onClick={() => fetchMessages(i.id)}>{i.name}</p>
+            <p key={i.id} onClick={() => selectGroupFromList(i.id)}>{i.name}</p>
           )
         })
       }

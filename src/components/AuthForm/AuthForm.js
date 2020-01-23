@@ -7,7 +7,8 @@ export const AuthForm = () => {
   const { users, fetchUsers, loadGroupList, selectUser } = useContext(FirebaseContext)
 
   useEffect(() => { 
-    fetchUsers()
+    const unsubscribe = fetchUsers()
+    return () => unsubscribe()
     // eslint-disable-next-line
   }, []);
 

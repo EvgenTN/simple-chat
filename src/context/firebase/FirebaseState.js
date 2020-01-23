@@ -2,14 +2,15 @@ import React, { useReducer } from 'react'
 import firebase from '../../firebase'
 import { FirebaseContext } from './firebaseContext'
 import { firebaseReducer } from './firebaseReducer'
-import { FETCH_USERS, ADD_GROUP, CLEAR_GROUPS, FETCH_MESSAGES, SELECT_USER } from '../types'
+import { FETCH_USERS, ADD_GROUP, CLEAR_GROUPS, FETCH_MESSAGES, SELECT_USER, SELECT_GROUP } from '../types'
 
 export const FirebaseState = ({ children }) => {
   const initialState = {
     users: [],
     groupsList: [],
     messages: [],
-    currentUser: {}
+    currentUser: {},
+    currentGroup: {}
   }
 
   const [state, dispatch] = useReducer(firebaseReducer, initialState)
@@ -55,8 +56,12 @@ export const FirebaseState = ({ children }) => {
     dispatch({type: SELECT_USER, payload})
   }
 
+  const selectGroup = (payload) => {
+    dispatch({type: SELECT_GROUP, payload})
+  }
+
   const fetchMessages = (groupId) => {
-    firebase.firestore().collection('messages').where('groupId', '==', groupId)
+    firebase.firestore().collection('messages').where('groupId', '==', groupId).orderBy('createdAt', 'asc')
     .onSnapshot(function(querySnapshot) {
       const payload = []
       querySnapshot.forEach(function(doc) {
@@ -71,13 +76,27 @@ export const FirebaseState = ({ children }) => {
     });
   }
 
+  const addMessage = async ({text, groupId, userId, userName}) => {
+    firebase
+      .firestore()
+      .collection('messages')
+      .add({
+        createdAt: new Date(),
+        text,
+        groupId,
+        userId,
+        userName
+      })
+  }
+
   return (
     <FirebaseContext.Provider value={{
-      fetchUsers, addUser, loadGroupList, fetchMessages, selectUser,
+      fetchUsers, addUser, loadGroupList, fetchMessages, selectUser, selectGroup, addMessage,
       users: state.users,
       groupsList: state.groupsList,
       messages: state.messages,
-      currentUser: state.currentUser
+      currentUser: state.currentUser,
+      currentGroup: state.currentGroup
     }}>
       {children}
     </FirebaseContext.Provider>
