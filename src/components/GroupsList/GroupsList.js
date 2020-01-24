@@ -1,17 +1,20 @@
+import React, { useContext, useEffect } from "react"
 import { FirebaseContext } from "../../context/firebase/firebaseContext"
-import React, { useContext } from "react"
 
 export const GroupsList = () => {
-  const { groupsList, fetchMessages, selectGroup } = useContext(FirebaseContext)
+  const { currentUser, groupsList, fetchMessages, loadGroupList, selectGroup } = useContext(FirebaseContext)
 
-  // const groupsList = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-  //   .map(i => { return { id: 'id' + i, name: 'group' + i, lastMessage: 'msg' + i } })
+  useEffect(() => {
+    loadGroupList(currentUser)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  console.log('groupsList', groupsList)
 
   const selectGroupFromList = (id) => {
     fetchMessages(id)
     selectGroup(groupsList.find(group => group.id === id))
   }
-
 
   return (
     <div className="group-list">
@@ -24,6 +27,4 @@ export const GroupsList = () => {
       }
     </div>
   )
-
-
 }

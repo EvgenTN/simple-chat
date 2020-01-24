@@ -3,9 +3,11 @@ import './App.scss';
 
 import { LoginPage } from './pages/LoginPage/LoginPage';
 import { FirebaseState } from './context/firebase/FirebaseState';
-import { BrowserRouter as Router, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import { HomePage } from './pages/HomePage/HomePage';
-import { AuthProvider } from './context/auth/authProvider';
+// import { AuthProvider } from './context/auth/authProvider';
+import { PrivateRoute } from './PrivateRoute';
+import { RegisterPage } from './pages/RegisterPage/RegisterPage';
 
 function App() {
   // const [group, setGroup] = useState("");
@@ -18,16 +20,19 @@ function App() {
   // }
 
   return (
-    <AuthProvider>
+    // <AuthProvider>
       <FirebaseState>
         <Router>
           <div className="App">
-            <Route exact path="/" component={HomePage} />
-            <Route exact path="/login" component={LoginPage} />
+            <Switch>
+              <PrivateRoute exact path="/" component={HomePage} />
+              <Route exact path="/login" component={LoginPage} />
+              <Route exact path="/sign-up" component={RegisterPage} />
+            </Switch>
           </div>
         </Router>
       </FirebaseState>
-    </AuthProvider>
+    // </AuthProvider>
   );
 }
 

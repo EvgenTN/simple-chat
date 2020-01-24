@@ -1,4 +1,4 @@
-import { FETCH_USERS, ADD_GROUP, FETCH_GROUPS, CLEAR_GROUPS, FETCH_MESSAGES, SELECT_USER, SELECT_GROUP } from "../types"
+import { FETCH_USERS, ADD_GROUP, FETCH_GROUPS, CLEAR_GROUPS, FETCH_MESSAGES, SELECT_USER, SELECT_GROUP, FETCH_USER_INFO } from "../types"
 
 const handlers = {
   [FETCH_USERS]: (state, {payload}) => ({...state, users: payload }),
@@ -8,6 +8,7 @@ const handlers = {
   [FETCH_MESSAGES]: (state, {payload}) => ({...state, messages: payload}),
   [SELECT_USER]: (state, {payload}) => ({...state, currentUserInfo: payload}),
   [SELECT_GROUP]: (state, {payload}) => ({...state, currentGroup: payload}),
+  [FETCH_USER_INFO]: (state, {payload}) => ({...state, currentUserInfo: payload}),
   DEFAULT: state => state
 }
 
