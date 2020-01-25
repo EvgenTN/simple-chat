@@ -5,7 +5,6 @@ import { LoginPage } from './pages/LoginPage/LoginPage';
 import { FirebaseState } from './context/firebase/FirebaseState';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import { HomePage } from './pages/HomePage/HomePage';
-// import { AuthProvider } from './context/auth/authProvider';
 import { PrivateRoute } from './PrivateRoute';
 import { RegisterPage } from './pages/RegisterPage/RegisterPage';
 
@@ -20,7 +19,6 @@ function App() {
   // }
 
   return (
-    // <AuthProvider>
       <FirebaseState>
         <Router>
           <div className="App">
@@ -32,7 +30,6 @@ function App() {
           </div>
         </Router>
       </FirebaseState>
-    // </AuthProvider>
   );
 }
 

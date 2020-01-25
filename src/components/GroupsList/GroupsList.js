@@ -9,7 +9,7 @@ export const GroupsList = () => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  console.log('groupsList', groupsList)
+  // console.log('groupsList', groupsList)
 
   const selectGroupFromList = (id) => {
     fetchMessages(id)
