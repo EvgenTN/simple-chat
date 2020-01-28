@@ -1,5 +1,3 @@
-/* eslint-disable-next-line */
-
 /*! normalize.css v8.0.1 | MIT License | github.com/necolas/normalize.css */
 
 /* Document
@@ -597,8 +595,6 @@ video {
   height: auto;
 }
 
-/* eslint-disable-next-line */
-
 .container {
   width: 100%;
 }
@@ -626,8 +622,6 @@ video {
     max-width: 1280px;
   }
 }
-
-/* eslint-disable-next-line */
 
 .sr-only {
   position: absolute;

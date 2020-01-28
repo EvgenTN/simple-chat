@@ -17,12 +17,13 @@ export const FirebaseState = ({ children }) => {
   useEffect(() => {
     const unsubscribe = firebase.auth().onAuthStateChanged(setCurrentUser);
     return () => unsubscribe()
-  }, []);
+  }, [currentUser]);
 
   const loadGroupList = async (user) => {
     dispatch({type: CLEAR_GROUPS})
     firebase.firestore().collection('users').where('email', '==', user.email)
       .onSnapshot(snapShot => {
+        if (!snapShot.docs.length) return;
         snapShot.docs[0].data().groupIdList.forEach(i => {
           firebase.firestore().collection('groups').doc(i).onSnapshot({
             includeMetadataChanges: false
@@ -104,7 +105,6 @@ export const FirebaseState = ({ children }) => {
         });
 
         dispatch({ type: FETCH_MESSAGES, payload })
-        // console.log("messes", payload);
       });
   }
 
@@ -123,7 +123,7 @@ export const FirebaseState = ({ children }) => {
 
   return (
     <FirebaseContext.Provider value={{
-      currentUser, 
+      currentUser,
       addUser, loadGroupList, fetchMessages, selectGroup, addMessage, selectUser, signIn, signOut, signUp,
       users: state.users,
       groupsList: state.groupsList,
