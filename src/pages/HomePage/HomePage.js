@@ -3,6 +3,7 @@ import { GroupsList } from '../../components/GroupsList/GroupsList';
 import { MessageBoard } from '../../components/MessageBoard/MessageBoard';
 import { NewMessage } from '../../components/NewMessage/NewMessage';
 import { FirebaseContext } from '../../context/firebase/firebaseContext';
+import { SearchResultList } from '../../components/SearchResultList';
 
 export const HomePage = () => {
 
@@ -15,6 +16,7 @@ export const HomePage = () => {
       <GroupsList />
       <MessageBoard />
       <NewMessage />
+      <SearchResultList />
     </div>
   )
 }
