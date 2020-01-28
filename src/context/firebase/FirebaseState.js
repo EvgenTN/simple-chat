@@ -13,14 +13,34 @@ export const FirebaseState = ({ children }) => {
   }
 
   const [currentUser, setCurrentUser] = useState(null);
+  const [searchResult, setSearchResult] = useState(null);
 
   useEffect(() => {
     const unsubscribe = firebase.auth().onAuthStateChanged(setCurrentUser);
     return () => unsubscribe()
   }, [currentUser]);
 
+  const loadSearchResult = (searchValue) => {
+    if (!searchValue) {
+      setSearchResult(null)
+      return;
+    };
+    firebase.firestore().collection('groups').where('name', '>=', searchValue)
+      .onSnapshot(snapShot => {
+        const result = [];
+        if (snapShot.empty) return;
+        snapShot.docs.forEach(doc => {
+          result.push({
+            id: doc.id,
+            ...doc.data()
+          })
+        })
+        setSearchResult(result);
+      })
+  }
+
   const loadGroupList = async (user) => {
-    dispatch({type: CLEAR_GROUPS})
+    dispatch({ type: CLEAR_GROUPS })
     firebase.firestore().collection('users').where('email', '==', user.email)
       .onSnapshot(snapShot => {
         if (!snapShot.docs.length) return;
@@ -123,8 +143,8 @@ export const FirebaseState = ({ children }) => {
 
   return (
     <FirebaseContext.Provider value={{
-      currentUser,
-      addUser, loadGroupList, fetchMessages, selectGroup, addMessage, selectUser, signIn, signOut, signUp,
+      currentUser, searchResult,
+      addUser, loadGroupList, fetchMessages, selectGroup, addMessage, selectUser, signIn, signOut, signUp, loadSearchResult,
       users: state.users,
       groupsList: state.groupsList,
       messages: state.messages,
