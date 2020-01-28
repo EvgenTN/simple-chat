@@ -2,7 +2,7 @@ import React, { useReducer, useEffect, useState } from 'react'
 import firebase from '../../firebase'
 import { FirebaseContext } from './firebaseContext'
 import { firebaseReducer } from './firebaseReducer'
-import { FETCH_USERS, ADD_GROUP, CLEAR_GROUPS, FETCH_MESSAGES, SELECT_USER, SELECT_GROUP, FETCH_USER_INFO } from '../types'
+import { ADD_GROUP, CLEAR_GROUPS, FETCH_MESSAGES, SELECT_USER, SELECT_GROUP } from '../types'
 
 export const FirebaseState = ({ children }) => {
   const initialState = {

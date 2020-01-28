@@ -1,5 +1,5 @@
 import React from 'react';
-import './App.scss';
+// import './App.scss';
 
 import { LoginPage } from './pages/LoginPage/LoginPage';
 import { FirebaseState } from './context/firebase/FirebaseState';
@@ -21,7 +21,7 @@ function App() {
   return (
       <FirebaseState>
         <Router>
-          <div className="App">
+          <div className="App w-full h-screen">
             <Switch>
               <PrivateRoute exact path="/" component={HomePage} />
               <Route exact path="/login" component={LoginPage} />

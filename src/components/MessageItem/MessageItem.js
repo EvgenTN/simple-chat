@@ -1,5 +1,5 @@
 import React from 'react'
-import style from './MessageItem.module.scss'
+// import style from './MessageItem.module.scss'
 
 export const MessageItem = ({message}) => {
 
@@ -8,10 +8,10 @@ export const MessageItem = ({message}) => {
   }
 
   return (
-    <div className={style.message} >
-      <h5 className={style['user-name']}>{message.userName}</h5>
+    <div >
+      <h5>{message.userName}</h5>
       <p>{message.text}</p>
-      <p  className={style.time}>
+      <p>
         <small>{formatedDate()}</small>
       </p>
     </div>

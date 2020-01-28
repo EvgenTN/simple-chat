@@ -1,29 +1,19 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useContext } from 'react';
 import { FirebaseContext } from '../../context/firebase/firebaseContext';
 import { Redirect, useHistory, Link } from 'react-router-dom';
 
 export const LoginPage = () => {
 
-  // const [selectedUser, setSelectedUser] = useState({});
-  const { signIn, currentUser, currentUserInfo, loadGroupList } = useContext(FirebaseContext)
+  const { signIn, currentUser} = useContext(FirebaseContext)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const history = useHistory()
-  
-  // useEffect(() => { 
-  //   const unsubscribe = fetchUsers()
-  //   return () => unsubscribe()
-  //   // eslint-disable-next-line
-  // }, []);
 
   const handleLogin = (e) => {
     e.preventDefault()
     signIn({email, password}).then(() => {
-      // currentUserInfo && loadGroupList(currentUserInfo.groupIdList)
       history.push("/")
     })
-    // const list = users.find(user => user.id === selectedUser)
-    // console.log('su', users.find(user => user.id === selectedUser))
   }
 
   if (currentUser) {
@@ -31,23 +21,22 @@ export const LoginPage = () => {
   }
 
   return (
-    <div className="Login-form">
-      <h3>Who are you? </h3>
-      <form name="login" onSubmit={handleLogin}>
-        {/* <select placeholder="Select user" onChange={e => setSelectedUser(e.target.value)} name="uName" >
-          <option>Select User</option>
-          {
-            users && users.map(i => (<option value={i.id} key={i.id}>{i.name}</option>))
-          }
-        </select> */}
-        <input type="email" name="email" placeholder="Email" value={email} onChange={(e => setEmail(e.target.value))} />
-        <input type="password" name="password" placeholder="Password" value={password} onChange={(e => setPassword(e.target.value))} />
-        <button type="submit">Login</button>
+    <div className="w-full bg-gray-100 h-screen flex flex-col justify-center items-center">
+      <h3 className="text-3xl mb-4 font-bold">Sign in</h3>
+      <form name="login" className="bg-white border border-gray-400 rounded px-8 py-8 pt-8" onSubmit={handleLogin}>
+        <label htmlFor="email" className="text-sm block font-bold  pt-2">Email</label>
+        <input type="email" name="email" value={email} onChange={e => setEmail(e.target.value)} className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline border-gray-400" />
+        <label htmlFor="password" className="text-sm block font-bold pt-2">Password</label>
+        <input type="password" name="password" value={password} onChange={e => setPassword(e.target.value)} className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline border-gray-400" />
+        <button className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold mt-6 py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">Login</button>
+        <p className="mt-8">
+          First time here?
+          <Link to="/sign-up">
+            <button className="bg-white hover:bg-gray-100 text-blue-500 font-semibold py-2 px-4 border-none">Sign Up</button>
+          </Link>
+        </p>
       </form>
-      <hr></hr>
-      <Link to="/sign-up">
-        <button>Sign Up</button>
-      </Link>
+
     </div>
   )
 }

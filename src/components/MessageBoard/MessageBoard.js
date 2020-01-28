@@ -1,5 +1,5 @@
 import React, { useContext } from 'react'
-import style from './MessageBoard.module.scss'
+// import style from './MessageBoard.module.scss'
 import { MessageItem } from '../MessageItem/MessageItem'
 import { FirebaseContext } from '../../context/firebase/firebaseContext'
 
