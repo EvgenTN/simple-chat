@@ -1,18 +1,13 @@
-import React, { useReducer, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import firebase from '../../firebase'
 import { FirebaseContext } from './firebaseContext'
-import { firebaseReducer } from './firebaseReducer'
-import { ADD_GROUP, CLEAR_GROUPS, FETCH_MESSAGES, SELECT_USER, SELECT_GROUP } from '../types'
 
 export const FirebaseState = ({ children }) => {
-  const initialState = {
-    users: [],
-    groupsList: [],
-    messages: [],
-    currentGroup: {}
-  }
 
   const [currentUser, setCurrentUser] = useState(null);
+  const [groupsList, setGroupsList] = useState([]);
+  const [messages, setMessages] = useState([]);
+  const [currentGroup, setCurrentGroup] = useState({});
   const [searchResult, setSearchResult] = useState(null);
 
   useEffect(() => {
@@ -40,7 +35,10 @@ export const FirebaseState = ({ children }) => {
   }
 
   const loadGroupList = async (user) => {
-    dispatch({ type: CLEAR_GROUPS })
+    setGroupsList([])
+    setMessages([])
+    setCurrentGroup({})
+    setSearchResult(null)
     firebase.firestore().collection('users').where('email', '==', user.email)
       .onSnapshot(snapShot => {
         if (!snapShot.docs.length) return;
@@ -52,7 +50,7 @@ export const FirebaseState = ({ children }) => {
               id: doc.id,
               ...doc.data()
             }
-            dispatch({ type: ADD_GROUP, payload })
+            setGroupsList(prevState => { return [...prevState, payload]})
           })
         })
       })
@@ -81,19 +79,6 @@ export const FirebaseState = ({ children }) => {
     firebase.auth().signOut()
   }
 
-  const [state, dispatch] = useReducer(firebaseReducer, initialState)
-
-  // const fetchUsers = () => {
-  //   firebase.firestore().collection('users').onSnapshot((snapshot) => {
-  //     const payload = snapshot.docs.map(doc => ({
-  //       id: doc.id,
-  //       ...doc.data()
-  //     }))
-
-  //     dispatch({ type: FETCH_USERS, payload })
-  //   })
-  // }
-
   const addUser = async (name, email) => {
     firebase
       .firestore()
@@ -105,12 +90,8 @@ export const FirebaseState = ({ children }) => {
       })
   }
 
-  const selectUser = (payload) => {
-    dispatch({ type: SELECT_USER, payload })
-  }
-
   const selectGroup = (payload) => {
-    dispatch({ type: SELECT_GROUP, payload })
+    setCurrentGroup(payload)
   }
 
   const fetchMessages = (groupId) => {
@@ -123,8 +104,7 @@ export const FirebaseState = ({ children }) => {
             ...doc.data()
           });
         });
-
-        dispatch({ type: FETCH_MESSAGES, payload })
+        setMessages(payload)
       });
   }
 
@@ -144,11 +124,10 @@ export const FirebaseState = ({ children }) => {
   return (
     <FirebaseContext.Provider value={{
       currentUser, searchResult,
-      addUser, loadGroupList, fetchMessages, selectGroup, addMessage, selectUser, signIn, signOut, signUp, loadSearchResult,
-      users: state.users,
-      groupsList: state.groupsList,
-      messages: state.messages,
-      currentGroup: state.currentGroup
+      addUser, loadGroupList, fetchMessages, selectGroup, addMessage, signIn, signOut, signUp, loadSearchResult,
+      groupsList,
+      messages,
+      currentGroup
     }}>
       {children}
     </FirebaseContext.Provider>
