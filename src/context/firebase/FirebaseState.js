@@ -42,15 +42,28 @@ export const FirebaseState = ({ children }) => {
     firebase.firestore().collection('users').where('email', '==', user.email)
       .onSnapshot(snapShot => {
         if (!snapShot.docs.length) return;
+        console.log(snapShot.docs[0].data())
         snapShot.docs[0].data().groupIdList.forEach(i => {
           firebase.firestore().collection('groups').doc(i).onSnapshot({
             includeMetadataChanges: false
           }, doc => {
+            console.log('doc', doc)
             const payload = {
               id: doc.id,
               ...doc.data()
             }
-            setGroupsList(prevState => { return [...prevState, payload]})
+            setGroupsList(prevState => {
+              console.log('pS', prevState)
+              const groupIndex = prevState.findIndex(group => group.id === payload.id)
+              if (~groupIndex) {
+                prevState[groupIndex] = payload
+                return prevState
+              } else {
+                return [...prevState, payload]
+              }
+
+            })
+
           })
         })
       })
@@ -118,6 +131,13 @@ export const FirebaseState = ({ children }) => {
         groupId,
         userId,
         userName
+      })
+    firebase
+      .firestore()
+      .collection('groups')
+      .doc(groupId)
+      .update({
+        lastMessage: text
       })
   }
 

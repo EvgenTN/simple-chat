@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { FirebaseContext } from '../../context/firebase/firebaseContext';
+import { FirebaseContext } from '../context/firebase/firebaseContext';
 import { Redirect, useHistory, Link } from 'react-router-dom';
 
 export const LoginPage = () => {
