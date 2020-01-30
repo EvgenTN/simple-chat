@@ -14,7 +14,7 @@ export const MessageBoard = () => {
   // }
 
   return (
-    <div className="flex-1 px-3">
+    <div className="flex flex-col overflow-y-auto flex-1 px-3">
       {messages.map(message => (
         // <div className={`${style.allmess} ${message.userId === currentUser.id ? style.mine : ''}`}>
         <MessageItem key={message.id} message={message} />

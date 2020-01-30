@@ -18,15 +18,15 @@ export const GroupsList = () => {
   }
 
   return (
-    <div>
+    <div className="px-2">
       {
         groupsList.map(i => {
           return (
-            <div className="flex items-center" key={i.id} onClick={() => selectGroupFromList(i.id)}>
-              <img className="w-10 h-10 rounded-full mr-4" src={defaultLogo} alt="ava" />
-              <div className="text-sm">
-                <p className="text-gray-900 leading-none">{i.name}</p>
-                <p className="text-gray-600">{i.lastMessage}</p>
+            <div className="flex items-center cursor-pointer hover:bg-gray-200 justify-start" key={i.id} onClick={() => selectGroupFromList(i.id)}>
+              <img className="w-1/6 h-10 rounded-full" src={defaultLogo} alt="ava" />
+              <div className="text-sm w-5/6">
+                <p className="text-gray-900 pl-1 leading-none truncate">{i.name}</p>
+                <p className="text-gray-600 pl-1 truncate">{i.lastMessage}</p>
               </div>
             </div>
           )

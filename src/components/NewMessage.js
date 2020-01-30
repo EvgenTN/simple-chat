@@ -17,7 +17,9 @@ export const NewMessage = () => {
       userId: currentUser.uid,
       userName: currentUser.displayName
     }
-    addMessage(payload)
+    addMessage(payload).then(
+      setNewMessage('')
+    )
   } 
 
   return (
