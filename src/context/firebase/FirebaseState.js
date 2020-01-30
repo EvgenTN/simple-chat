@@ -3,7 +3,26 @@ import firebase from '../../firebase'
 import { FirebaseContext } from './firebaseContext'
 
 export const FirebaseState = ({ children }) => {
+  // ------------------------------ Пока пусть тут побудет -------------------------
 
+  const [isShowNewGroupModal, setIsShowNewGroupModal] = useState(false);
+
+  const toggleNewGroupModal = (modal, value) => {
+    switch (modal) {
+      case('newGroup'): 
+        setIsShowNewGroupModal(value);
+        break
+      default:
+        break
+    }
+  }
+
+  // const toggleNewGroupModal = () => {
+  //   setIsShowNewGroupModal(!isShowNewGroupModal)
+  // }
+
+
+  // -------------------------------------------------------------------------------
   const [currentUser, setCurrentUser] = useState(null);
   const [groupsList, setGroupsList] = useState([]);
   const [messages, setMessages] = useState([]);
@@ -147,7 +166,10 @@ export const FirebaseState = ({ children }) => {
       addUser, loadGroupList, fetchMessages, selectGroup, addMessage, signIn, signOut, signUp, loadSearchResult,
       groupsList,
       messages,
-      currentGroup
+      currentGroup,
+
+      isShowNewGroupModal,
+      toggleNewGroupModal
     }}>
       {children}
     </FirebaseContext.Provider>

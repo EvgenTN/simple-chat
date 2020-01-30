@@ -5,12 +5,14 @@ import { NewMessage } from '../components/NewMessage';
 import { Search } from '../components/Search';
 import { SearchResultList } from '../components/SearchResultList';
 import { AppHeader } from '../components/AppHeader';
+import { NewGroupModal } from '../components/NewGroupModal';
 
 export const HomePage = () => {
 
 
   return (
-    <div>
+    <div className="relative" >
+      <NewGroupModal />
       <AppHeader />
       <div className="w-full flex h-else">
         <div className="w-1/5">
