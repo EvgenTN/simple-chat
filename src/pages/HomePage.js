@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { GroupsList } from '../components/GroupsList';
 import { MessageBoard } from '../components/MessageBoard';
 import { NewMessage } from '../components/NewMessage';
@@ -6,9 +6,28 @@ import { Search } from '../components/Search';
 import { SearchResultList } from '../components/SearchResultList';
 import { AppHeader } from '../components/AppHeader';
 import { NewGroupModal } from '../components/NewGroupModal';
+import { FirebaseContext } from '../context/firebase/firebaseContext';
+import { AddButton } from '../components/AddButton';
 
 export const HomePage = () => {
 
+  const { searchResult, currentGroup, groupsIdList } = useContext(FirebaseContext)
+  const [isInList, setIsInList] = useState(true)
+
+  const checkGroup = () => {
+    if (!currentGroup.id) return
+    const groupAdded = groupsIdList.find(id => id === currentGroup.id)
+    if (groupAdded) {
+      setIsInList(true)
+    } else {
+      setIsInList(false)
+    }
+  }
+
+  useEffect(() => {
+    checkGroup()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentGroup])
 
   return (
     <div className="relative" >
@@ -17,12 +36,17 @@ export const HomePage = () => {
       <div className="w-full flex h-else">
         <div className="w-1/5">
           <Search />
-          <GroupsList />
-          <SearchResultList />
+          {!searchResult ? 
+            <GroupsList /> :
+            <SearchResultList />
+          }
         </div>
         <div className="w-4/5 flex flex-col justify-between">
           <MessageBoard />
-          <NewMessage />
+          {isInList ? 
+            <NewMessage /> :
+            <AddButton />
+          }
         </div>
       </div>
     </div>

@@ -9,7 +9,7 @@ export const FirebaseState = ({ children }) => {
 
   const toggleNewGroupModal = (modal, value) => {
     switch (modal) {
-      case('newGroup'): 
+      case ('newGroup'):
         setIsShowNewGroupModal(value);
         break
       default:
@@ -161,6 +161,16 @@ export const FirebaseState = ({ children }) => {
       })
   }
 
+  const addGroupToList = (id) => {
+    firebase
+      .firestore()
+      .collection('users')
+      .doc(docUserId)
+      .update({
+        groupIdList: [...groupsIdList, id]
+      })
+  }
+
   const fetchMessages = (groupId) => {
     firebase.firestore().collection('messages').where('groupId', '==', groupId).orderBy('createdAt', 'asc')
       .onSnapshot(function (querySnapshot) {
@@ -198,8 +208,9 @@ export const FirebaseState = ({ children }) => {
   return (
     <FirebaseContext.Provider value={{
       currentUser, searchResult,
-      addUser, addNewGroup, loadGroupList, fetchMessages, selectGroup, addMessage, signIn, signOut, signUp, loadSearchResult,
+      addUser, addNewGroup, addGroupToList, loadGroupList, fetchMessages, selectGroup, addMessage, signIn, signOut, signUp, loadSearchResult,
       groupsList,
+      groupsIdList,
       messages,
       currentGroup,
 

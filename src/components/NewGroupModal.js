@@ -53,10 +53,10 @@ export const NewGroupModal = () => {
           <input type="text" name="name" value={value} onChange={(e) => setValue(e.target.value)} className="appearance-none border rounded w-full py-2 px-3 mb-2 text-gray-700 leading-tight focus:outline-none focus:border-blue-500 hover:border-gray-700 border-gray-400"/>
 
           <div className="flex justify-end h-8 mt-2">
-            <button onClick={addGroup} className="bg-blue-900 inlene-block text-sm leading-none hover:bg-white text-white hover:text-blue-900 py-2 px-4 focus:outline-none border border-blue-900 hover:border-blue-900 rounded">
+            <button onClick={addGroup} className="bg-blue-900 inlene-block text-sm leading-none hover:bg-gray-700 text-white py-2 px-4 mr-2 focus:outline-none border border-blue-900 hover:border-gray-800 rounded">
               Add group
             </button>
-            <button onClick={() => toggleNewGroupModal('newGroup', false)} className="px-4 bg-transparent leading-none text-sm py-2 focus:outline-none rounded-lg text-blue-900 hover:bg-gray-100 hover:text-blue-700">Close</button>
+            <button onClick={() => toggleNewGroupModal('newGroup', false)} className="px-4 bg-transparent leading-none text-sm py-2 focus:outline-none rounded text-blue-900 hover:bg-gray-300 hover:text-gray-800">Close</button>
           </div>
 
         </div>
