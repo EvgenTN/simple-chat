@@ -25,7 +25,7 @@ export const GroupsList = () => {
             <div className="flex items-center cursor-pointer hover:bg-gray-200 justify-start" key={i.id} onClick={() => selectGroupFromList(i.id)}>
               <img className="w-1/6 h-10 rounded-full" src={defaultLogo} alt="ava" />
               <div className="text-sm w-5/6">
-                <p className="text-gray-900 pl-1 leading-none truncate">{i.name}</p>
+                <p className="text-gray-900 pl-1 truncate">{i.name}</p>
                 <p className="text-gray-600 pl-1 truncate">{i.lastMessage}</p>
               </div>
             </div>
