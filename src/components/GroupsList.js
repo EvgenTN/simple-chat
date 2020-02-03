@@ -3,7 +3,7 @@ import { FirebaseContext } from "../context/firebase/firebaseContext"
 import defaultLogo from '../assets/logo192.png'
 
 export const GroupsList = () => {
-  const { currentUser, groupsList, fetchMessages, loadGroupList, selectGroup } = useContext(FirebaseContext)
+  const { currentUser, groupsList, fetchMessages, loadGroupList, selectGroup, currentGroup } = useContext(FirebaseContext)
 
   useEffect(() => {
     loadGroupList(currentUser)
@@ -23,7 +23,7 @@ export const GroupsList = () => {
       {
         groupsList.map(i => {
           return (
-            <div className="flex items-center cursor-pointer hover:bg-gray-200 justify-start" key={i.id} onClick={() => selectGroupFromList(i.id)}>
+            <div className={`flex items-center cursor-pointer hover:bg-gray-200 justify-start ${currentGroup.id === i.id ? 'bg-gray-200' : ''}`} key={i.id} onClick={() => selectGroupFromList(i.id)}>
               <img className="w-1/6 h-10 rounded-full" src={defaultLogo} alt="ava" />
               <div className="text-sm w-5/6">
                 <p className="text-gray-900 pl-1 truncate">{i.name}</p>

@@ -13,8 +13,8 @@ export const MessageItem = ({ message }) => {
 
   return (
     <div className={`${align} rounded border p-4 m-2 w-auto max-w-md`}>
-      <h3 className="flex justify-between items-center text-lg mb-2 font-bold">
-        <p className="stretched-link mr-2">
+      <h3 className="flex justify-between items-center text-lg mb-2">
+        <p className="font-bold mr-2">
           {message.userName}
         </p>
         <p className="text-sm text-gray-600">{formatedDate()}</p>

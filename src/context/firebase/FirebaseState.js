@@ -6,18 +6,22 @@ export const FirebaseState = ({ children }) => {
   // ------------------------------ Пока пусть тут побудет -------------------------
 
   const [isShowNewGroupModal, setIsShowNewGroupModal] = useState(false);
+  const [isShowSettingsModal, setIsShowSettingsModal] = useState(false);
 
-  const toggleNewGroupModal = (modal, value) => {
+  const toggleModal = (modal, value) => {
     switch (modal) {
       case ('newGroup'):
         setIsShowNewGroupModal(value);
         break
+      case ('settings'):
+        setIsShowSettingsModal(value);
+      break
       default:
         break
     }
   }
 
-  // const toggleNewGroupModal = () => {
+  // const toggleModal = () => {
   //   setIsShowNewGroupModal(!isShowNewGroupModal)
   // }
 
@@ -219,7 +223,8 @@ export const FirebaseState = ({ children }) => {
       currentGroup,
 
       isShowNewGroupModal,
-      toggleNewGroupModal
+      isShowSettingsModal,
+      toggleModal
     }}>
       {children}
     </FirebaseContext.Provider>

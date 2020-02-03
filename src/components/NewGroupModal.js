@@ -1,33 +1,35 @@
-import React, { useContext, useState, useEffect, useRef } from 'react'
+import React, { useContext, useState, useRef } from 'react'
 import { FirebaseContext } from '../context/firebase/firebaseContext'
+import { useOutsideListener } from '../services/useOutsideListener'
 
-function useOutsideAlerter(ref) {
+// function useOutsideAlerter(ref) {
 
-  const { toggleNewGroupModal } = useContext(FirebaseContext)
+//   const { toggleModal } = useContext(FirebaseContext)
   
-  function handleClickOutside(event) {
-    if (ref.current && !ref.current.contains(event.target)) {
-      toggleNewGroupModal('newGroup', false)
-    }
-  }
+//   function handleClickOutside(event) {
+//     if (ref.current && !ref.current.contains(event.target)) {
+//       toggleModal('newGroup', false)
+//     }
+//   }
 
-  useEffect(() => {
-    // Bind the event listener
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      // Unbind the event listener on clean up
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  });
-}
+//   useEffect(() => {
+//     // Bind the event listener
+//     document.addEventListener("mousedown", handleClickOutside);
+//     return () => {
+//       // Unbind the event listener on clean up
+//       document.removeEventListener("mousedown", handleClickOutside);
+//     };
+//   });
+// }
 
 export const NewGroupModal = () => {
 
-  const { isShowNewGroupModal, toggleNewGroupModal, addNewGroup } = useContext(FirebaseContext)
+  const { isShowNewGroupModal, toggleModal, addNewGroup } = useContext(FirebaseContext)
   const [value, setValue] = useState('')
 
+  
   const wrapperRef = useRef(null);
-  useOutsideAlerter(wrapperRef);
+  useOutsideListener(wrapperRef, 'newGroup');
 
   if (!isShowNewGroupModal) {
     return null
@@ -36,7 +38,7 @@ export const NewGroupModal = () => {
   const addGroup = () => {
     addNewGroup(value).then(() => {
       setValue('')
-      toggleNewGroupModal('newGroup', false)
+      toggleModal('newGroup', false)
     })
   }
 
@@ -56,7 +58,7 @@ export const NewGroupModal = () => {
             <button onClick={addGroup} className="bg-blue-900 inlene-block text-sm leading-none hover:bg-gray-700 text-white py-2 px-4 mr-2 focus:outline-none border border-blue-900 hover:border-gray-800 rounded">
               Add group
             </button>
-            <button onClick={() => toggleNewGroupModal('newGroup', false)} className="px-4 bg-transparent leading-none text-sm py-2 focus:outline-none rounded text-blue-900 hover:bg-gray-300 hover:text-gray-800">Close</button>
+            <button onClick={() => toggleModal('newGroup', false)} className="px-4 bg-transparent leading-none text-sm py-2 focus:outline-none rounded text-blue-900 hover:bg-gray-300 hover:text-gray-800">Close</button>
           </div>
 
         </div>

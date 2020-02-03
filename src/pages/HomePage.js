@@ -8,6 +8,8 @@ import { AppHeader } from '../components/AppHeader';
 import { NewGroupModal } from '../components/NewGroupModal';
 import { FirebaseContext } from '../context/firebase/firebaseContext';
 import { AddButton } from '../components/AddButton';
+import { SettingsModal } from '../components/SettingsModal';
+import { GroupInfo } from '../components/GroupInfo';
 
 export const HomePage = () => {
 
@@ -32,6 +34,7 @@ export const HomePage = () => {
   return (
     <div className="relative" >
       <NewGroupModal />
+      <SettingsModal />
       <AppHeader />
       <div className="w-full flex h-else">
         <div className="w-1/5">
@@ -49,7 +52,7 @@ export const HomePage = () => {
           }
         </div>
         <div className="w-1/5" >
-          <p>Third part</p>
+          <GroupInfo />
         </div>
       </div>
     </div>

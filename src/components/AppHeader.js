@@ -3,7 +3,7 @@ import { FirebaseContext } from '../context/firebase/firebaseContext';
 
 export const AppHeader = () => {
 
-  const { signOut, toggleNewGroupModal } = useContext(FirebaseContext)
+  const { signOut, toggleModal, currentUser } = useContext(FirebaseContext)
 
 
   return (
@@ -22,14 +22,20 @@ export const AppHeader = () => {
           <button className="block mt-4 focus:outline-none lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-4">
             Docs
       </button>
-          <button className="block mt-4 focus:outline-none lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-4">
+          <button onClick={() => toggleModal('settings', true)} className="block mt-4 focus:outline-none lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-4">
             Settings
       </button>
-          <button onClick={() => toggleNewGroupModal('newGroup', true)} className="block focus:outline-none mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white">
+          <button onClick={() => toggleModal('newGroup', true)} className="block focus:outline-none mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white">
             New group
       </button>
         </div>
-        <div>
+        <div className="flex">
+          <div className="flex items-center">
+            <svg className="w-6 h-6 fill-current text-white mr-1" viewBox="0 0 24 24">
+              <path d="M12,19.2C9.5,19.2 7.29,17.92 6,16C6.03,14 10,12.9 12,12.9C14,12.9 17.97,14 18,16C16.71,17.92 14.5,19.2 12,19.2M12,5A3,3 0 0,1 15,8A3,3 0 0,1 12,11A3,3 0 0,1 9,8A3,3 0 0,1 12,5M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12C22,6.47 17.5,2 12,2Z"/>
+            </svg>
+            <span className="text-white mr-4" >{currentUser.displayName}</span>
+          </div>
           <button onClick={signOut} className="inline-block text-sm px-4 py-2 leading-none border rounded text-white border-white hover:border-transparent hover:text-blue-900 hover:bg-white mt-4 lg:mt-0">Sign out</button>
         </div>
       </div>
