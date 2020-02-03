@@ -5,8 +5,6 @@ export const AddButton = () => {
 
   const {currentGroup, addGroupToList} = useContext(FirebaseContext)
 
-  console.log(currentGroup.id)
-
   if(!currentGroup.id) {
     return null
   }

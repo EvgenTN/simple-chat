@@ -27,7 +27,7 @@ export const HomePage = () => {
   useEffect(() => {
     checkGroup()
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentGroup])
+  }, [currentGroup, groupsIdList])
 
   return (
     <div className="relative" >
@@ -41,12 +41,15 @@ export const HomePage = () => {
             <SearchResultList />
           }
         </div>
-        <div className="w-4/5 flex flex-col justify-between">
+        <div className="w-3/5 flex flex-col justify-between">
           <MessageBoard />
           {isInList ? 
             <NewMessage /> :
             <AddButton />
           }
+        </div>
+        <div className="w-1/5" >
+          <p>Third part</p>
         </div>
       </div>
     </div>
