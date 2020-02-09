@@ -10,9 +10,6 @@ export const GroupsList = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentUser])
 
-  // console.log('groupsList map', groupsList.map(i => i.lastMessage))
-  // console.log('groupsList', groupsList)
-
   const selectGroupFromList = (id) => {
     fetchMessages(id)
     selectGroup(groupsList.find(group => group.id === id))

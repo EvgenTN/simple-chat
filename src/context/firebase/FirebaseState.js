@@ -97,8 +97,7 @@ export const FirebaseState = ({ children }) => {
       })
   }
 
-  const loadGroupList = async (user) => {
-    // console.log('first')
+  const loadGroupList = (user) => {
     setGroupsList([])
     setMessages([])
     setCurrentGroup({})
@@ -112,23 +111,20 @@ export const FirebaseState = ({ children }) => {
           firebase.firestore().collection('groups').doc(i).onSnapshot({
             includeMetadataChanges: false
           }, doc => {
-            // console.log('doc', doc)
             const payload = {
               id: doc.id,
               ...doc.data()
             }
             setGroupsList(prevState => {
-              // console.log('pS', prevState)
               const groupIndex = prevState.findIndex(group => group.id === payload.id)
               if (~groupIndex) {
                 prevState[groupIndex] = payload
-                return prevState
+                return [...prevState]
               } else {
                 return [...prevState, payload]
               }
 
             })
-
           })
         })
       })
