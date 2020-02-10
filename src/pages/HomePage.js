@@ -6,6 +6,7 @@ import { Search } from '../components/Search';
 import { SearchResultList } from '../components/SearchResultList';
 import { AppHeader } from '../components/AppHeader';
 import { NewGroupModal } from '../components/NewGroupModal';
+import { NewFriendModal } from '../components/NewFriendModal';
 import { FirebaseContext } from '../context/firebase/firebaseContext';
 import { AddButton } from '../components/AddButton';
 import { SettingsModal } from '../components/SettingsModal';
@@ -33,6 +34,7 @@ export const HomePage = () => {
 
   return (
     <div className="relative" >
+      <NewFriendModal />
       <NewGroupModal />
       <SettingsModal />
       <AppHeader />

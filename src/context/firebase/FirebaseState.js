@@ -6,6 +6,7 @@ export const FirebaseState = ({ children }) => {
   // ------------------------------ Пока пусть тут побудет -------------------------
 
   const [isShowNewGroupModal, setIsShowNewGroupModal] = useState(false);
+  const [isShowNewFriendModal, setIsShowNewFriendModal] = useState(false);
   const [isShowSettingsModal, setIsShowSettingsModal] = useState(false);
 
   const toggleModal = (modal, value) => {
@@ -16,6 +17,9 @@ export const FirebaseState = ({ children }) => {
       case ('settings'):
         setIsShowSettingsModal(value);
       break
+      case ('friend'):
+        setIsShowNewFriendModal(value);
+      break
       default:
         break
     }
@@ -24,6 +28,19 @@ export const FirebaseState = ({ children }) => {
   // const toggleModal = () => {
   //   setIsShowNewGroupModal(!isShowNewGroupModal)
   // }
+
+  const createKeywords = (name) => {
+    const arrName = [];
+    let curName = '';
+    name.split('').forEach((letter) => {
+      curName += letter;
+      arrName.push(curName);
+    })
+    if (arrName.length > 15) {
+      arrName.length = 15
+    }
+    return arrName
+  }
 
 
   // -------------------------------------------------------------------------------
@@ -34,6 +51,7 @@ export const FirebaseState = ({ children }) => {
   const [messages, setMessages] = useState([]);
   const [currentGroup, setCurrentGroup] = useState({});
   const [searchResult, setSearchResult] = useState(null);
+  const [potencialFriends, setPotencialFriends] = useState(null);
 
   useEffect(() => {
     const unsubscribe = firebase.auth().onAuthStateChanged(setCurrentUser);
@@ -55,6 +73,8 @@ export const FirebaseState = ({ children }) => {
       .collection('users')
       .add({
         email,
+        name,
+        searchKeywords: createKeywords(name),
         groupIdList: []
       })
   }
@@ -63,27 +83,16 @@ export const FirebaseState = ({ children }) => {
     firebase.auth().signOut()
   }
 
-  const addUser = async (name, email) => {
-    firebase
-      .firestore()
-      .collection('users')
-      .add({
-        name,
-        email,
-        groupIdList: []
-      })
-  }
-
   const selectGroup = (payload) => {
     setCurrentGroup(payload)
   }
 
-  const loadSearchResult = (searchValue) => {
+  const loadSearchResult = (searchValue, collection) => {
     if (!searchValue) {
       setSearchResult(null)
       return;
     };
-    firebase.firestore().collection('groups').where('searchKeywords', 'array-contains', searchValue)
+    firebase.firestore().collection(collection).where('searchKeywords', 'array-contains', searchValue)
       .onSnapshot(snapShot => {
         const result = [];
         if (snapShot.empty) return;
@@ -93,7 +102,8 @@ export const FirebaseState = ({ children }) => {
             ...doc.data()
           })
         })
-        setSearchResult(result);
+        if (collection === 'groups') setSearchResult(result);
+        if (collection === 'users') setPotencialFriends(result);
       })
   }
 
@@ -119,50 +129,43 @@ export const FirebaseState = ({ children }) => {
               const groupIndex = prevState.findIndex(group => group.id === payload.id)
               if (~groupIndex) {
                 prevState[groupIndex] = payload
+                prevState.sort((a, b) => b.lastMessageCreatedAt.seconds - a.lastMessageCreatedAt.seconds)
                 return [...prevState]
               } else {
-                return [...prevState, payload]
+                prevState.push(payload)
+                prevState.sort((a, b) => b.lastMessageCreatedAt.seconds - a.lastMessageCreatedAt.seconds)
+                return [...prevState]
               }
-
             })
           })
         })
       })
   }
 
-  const createKeywords = (name) => {
-    const arrName = [];
-    let curName = '';
-    name.split('').forEach((letter) => {
-      curName += letter;
-      arrName.push(curName);
-    })
-    if (arrName.length > 15) {
-      arrName.length = 15
-    }
-    return arrName
-  }
-
   const addNewGroup = async (name) => {
-    let createdGroupId;
-    firebase
-      .firestore()
-      .collection('groups')
-      .add({
-        name,
-        lastMessage: '',
-        searchKeywords: createKeywords(name)
-      })
-      .then(doc => createdGroupId = doc.id)
-      .then(() => {
-        firebase
-          .firestore()
-          .collection('users')
-          .doc(docUserId)
-          .update({
-            groupIdList: [...groupsIdList, createdGroupId]
-          })
-      })
+    let existedGroup = await firebase.firestore().collection('groups').where('name', '==', name).get()
+    if (existedGroup.empty) {
+      let createdGroupId;
+      firebase
+        .firestore()
+        .collection('groups')
+        .add({
+          name,
+          lastMessage: '',
+          searchKeywords: createKeywords(name),
+          creatorId: docUserId
+        })
+        .then(doc => createdGroupId = doc.id)
+        .then(() => {
+          firebase
+            .firestore()
+            .collection('users')
+            .doc(docUserId)
+            .update({
+              groupIdList: [...groupsIdList, createdGroupId]
+            })
+        })
+    } else alert('Group exists')
   }
 
   const addGroupToList = (id) => {
@@ -205,14 +208,15 @@ export const FirebaseState = ({ children }) => {
       .collection('groups')
       .doc(groupId)
       .update({
+        lastMessageCreatedAt: new Date(),
         lastMessage: text
       })
   }
 
   return (
     <FirebaseContext.Provider value={{
-      currentUser, searchResult,
-      addUser, addNewGroup, addGroupToList, loadGroupList, fetchMessages, selectGroup, addMessage, signIn, signOut, signUp, loadSearchResult,
+      currentUser, searchResult, potencialFriends,
+      addNewGroup, addGroupToList, loadGroupList, fetchMessages, selectGroup, addMessage, signIn, signOut, signUp, loadSearchResult,
       groupsList,
       groupsIdList,
       messages,
@@ -220,6 +224,7 @@ export const FirebaseState = ({ children }) => {
 
       isShowNewGroupModal,
       isShowSettingsModal,
+      isShowNewFriendModal,
       toggleModal
     }}>
       {children}

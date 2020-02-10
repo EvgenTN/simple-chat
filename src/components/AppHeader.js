@@ -19,15 +19,15 @@ export const AppHeader = () => {
       </div>
       <div className="w-full block flex-grow lg:flex lg:items-center lg:w-auto">
         <div className="text-sm lg:flex-grow">
-          <button className="block mt-4 focus:outline-none lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-4">
-            Docs
-      </button>
-          <button onClick={() => toggleModal('settings', true)} className="block mt-4 focus:outline-none lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-4">
-            Settings
-      </button>
-          <button onClick={() => toggleModal('newGroup', true)} className="block focus:outline-none mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white">
+          <button onClick={() => toggleModal('friend', true)} className="block mt-4 focus:outline-none lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-4">
+            Add friend
+          </button>
+          <button onClick={() => toggleModal('newGroup', true)} className="block focus:outline-none mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-4">
             New group
-      </button>
+          </button>
+          <button onClick={() => toggleModal('settings', true)} className="block mt-4 focus:outline-none lg:inline-block lg:mt-0 text-teal-200 hover:text-white">
+            Settings
+          </button>
         </div>
         <div className="flex">
           <div className="flex items-center">
