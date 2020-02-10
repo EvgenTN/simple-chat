@@ -90,6 +90,7 @@ export const FirebaseState = ({ children }) => {
   const loadSearchResult = (searchValue, collection) => {
     if (!searchValue) {
       setSearchResult(null)
+      setPotencialFriends(null)
       return;
     };
     firebase.firestore().collection(collection).where('searchKeywords', 'array-contains', searchValue)
@@ -143,6 +144,32 @@ export const FirebaseState = ({ children }) => {
   }
 
   const addNewGroup = async (name) => {
+    let existedGroup = await firebase.firestore().collection('groups').where('name', '==', name).get()
+    if (existedGroup.empty) {
+      let createdGroupId;
+      firebase
+        .firestore()
+        .collection('groups')
+        .add({
+          name,
+          lastMessage: '',
+          searchKeywords: createKeywords(name),
+          creatorId: docUserId
+        })
+        .then(doc => createdGroupId = doc.id)
+        .then(() => {
+          firebase
+            .firestore()
+            .collection('users')
+            .doc(docUserId)
+            .update({
+              groupIdList: [...groupsIdList, createdGroupId]
+            })
+        })
+    } else alert('Group exists')
+  }
+
+  const addDialog = async (userId, name) => {
     let existedGroup = await firebase.firestore().collection('groups').where('name', '==', name).get()
     if (existedGroup.empty) {
       let createdGroupId;
