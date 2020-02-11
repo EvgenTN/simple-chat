@@ -42,8 +42,8 @@ export const FirebaseState = ({ children }) => {
     return arrName
   }
 
-
   // -------------------------------------------------------------------------------
+  
   const [currentUser, setCurrentUser] = useState(null);
   const [docUserId, setDocUserId] = useState(null);
   const [groupsList, setGroupsList] = useState([]);
@@ -93,6 +93,8 @@ export const FirebaseState = ({ children }) => {
       setPotencialFriends(null)
       return;
     };
+    setSearchResult([])
+    setPotencialFriends([])
     firebase.firestore().collection(collection).where('searchKeywords', 'array-contains', searchValue)
       .onSnapshot(snapShot => {
         const result = [];
