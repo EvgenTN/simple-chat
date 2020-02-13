@@ -79,7 +79,11 @@ export const FirebaseState = ({ children }) => {
         email,
         name,
         searchKeywords: createKeywords(name),
-        groupIdList: []
+        groupIdList: [],
+        contactList: [],
+        logo: null,
+        background: null,
+        language: null
       })
   }
 
@@ -159,7 +163,9 @@ export const FirebaseState = ({ children }) => {
         .add({
           name,
           lastMessage: '',
+          lastMessageCreatedAt: null,
           searchKeywords: createKeywords(name),
+          logo: null,
           creatorId: docUserId
         })
         .then(doc => createdGroupId = doc.id)
