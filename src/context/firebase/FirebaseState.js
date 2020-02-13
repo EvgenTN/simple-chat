@@ -58,6 +58,10 @@ export const FirebaseState = ({ children }) => {
     return () => unsubscribe()
   }, [currentUser]);
 
+  function getProfilePicUrl() {
+    return firebase.auth().currentUser.photoURL || '/images/placeholder-image.png';
+  }
+
   const signIn = async ({ email, password }) => {
     await firebase.auth().signInWithEmailAndPassword(email, password)
   }
