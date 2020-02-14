@@ -5,17 +5,13 @@ import defaultLogo from '../assets/logo192.png'
 
 export const NewFriendModal = () => {
 
-  const { isShowNewFriendModal, toggleModal, loadSearchResult, potencialFriends } = useContext(FirebaseContext)
+  const { isShowNewFriendModal, toggleModal, loadSearchResult, addContact, potencialFriends } = useContext(FirebaseContext)
 
   const wrapRef = useRef(null);
   useOutsideListener(wrapRef, 'friend');
 
   if (!isShowNewFriendModal) {
     return null
-  }
-
-  const addDialog = (userId) => {
-
   }
 
   return (
@@ -34,13 +30,13 @@ export const NewFriendModal = () => {
             potencialFriends && potencialFriends.map(item => (
               <div className="flex justify-between" key={item.id}>
                 <div className={`flex items-center justify-start`} key={item.id}>
-                  <img className="w-1/6 h-10 rounded-full" src={defaultLogo} alt="ava" />
+                  <img className="w-1/6 h-10 rounded-full" src={item.logo ? item.logo : defaultLogo} alt="ava" />
                   <div className="text-sm w-5/6">
                     <p className="text-gray-900 pl-1 truncate">{item.name}</p>
                   </div>
                 </div>
 
-                <button onClick={() => addDialog(item.id)} className="inlene-block text-sm leading-none hover:bg-gray-100 text-white py-2 px-2 mr-2 focus:outline-none hover:border-gray-100 rounded-full">
+                <button onClick={() => addContact(item)} className="inlene-block text-sm leading-none hover:bg-gray-100 text-white py-2 px-2 mr-2 focus:outline-none hover:border-gray-100 rounded-full">
                   <svg className="w-6 h-6 fill-current text-blue-900" viewBox="0 0 24 24">
                     <path d="M19,13H13V19H11V13H5V11H11V5H13V11H19V13Z" />
                   </svg>

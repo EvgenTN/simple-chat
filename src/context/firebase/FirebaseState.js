@@ -16,10 +16,10 @@ export const FirebaseState = ({ children }) => {
         break
       case ('settings'):
         setIsShowSettingsModal(value);
-      break
+        break
       case ('friend'):
         setIsShowNewFriendModal(value);
-      break
+        break
       default:
         break
     }
@@ -43,13 +43,15 @@ export const FirebaseState = ({ children }) => {
   }
 
   // -------------------------------------------------------------------------------
-  
+
   const [currentUser, setCurrentUser] = useState(null);
   const [docUserId, setDocUserId] = useState(null);
-  const [groupsList, setGroupsList] = useState([]);
-  const [groupsIdList, setGroupsIdList] = useState([]);
+  const [groupList, setGroupList] = useState([]);
+  const [contactList, setContactList] = useState([]);
+  const [groupIdList, setGroupIdList] = useState([]);
+  const [contactIdList, setContactIdList] = useState([]);
   const [messages, setMessages] = useState([]);
-  const [currentGroup, setCurrentGroup] = useState({});
+  const [currentChat, setCurrentChat] = useState({});
   const [searchResult, setSearchResult] = useState(null);
   const [potencialFriends, setPotencialFriends] = useState(null);
 
@@ -80,7 +82,7 @@ export const FirebaseState = ({ children }) => {
         name,
         searchKeywords: createKeywords(name),
         groupIdList: [],
-        contactList: [],
+        contactIdList: [],
         logo: null,
         background: null,
         language: null
@@ -91,8 +93,12 @@ export const FirebaseState = ({ children }) => {
     firebase.auth().signOut()
   }
 
-  const selectGroup = (payload) => {
-    setCurrentGroup(payload)
+  const selectChat = (payload) => {
+    setCurrentChat(payload)
+  }
+
+  const findContacts = (searchValue) => {
+    
   }
 
   const loadSearchResult = (searchValue, collection) => {
@@ -101,8 +107,8 @@ export const FirebaseState = ({ children }) => {
       setPotencialFriends(null)
       return;
     };
-    setSearchResult([])
-    setPotencialFriends([])
+    if (collection === 'groups') setSearchResult([])
+    if (collection === 'users') setPotencialFriends([])
     firebase.firestore().collection(collection).where('searchKeywords', 'array-contains', searchValue)
       .onSnapshot(snapShot => {
         const result = [];
@@ -118,16 +124,38 @@ export const FirebaseState = ({ children }) => {
       })
   }
 
-  const loadGroupList = (user) => {
-    setGroupsList([])
+  const loadChatList = (user) => {
+    setGroupList([])
+    setContactList([])
     setMessages([])
-    setCurrentGroup({})
+    setCurrentChat({})
     setSearchResult(null)
     firebase.firestore().collection('users').where('email', '==', user.email)
       .onSnapshot(snapShot => {
         if (!snapShot.docs.length) return;
-        setGroupsIdList(snapShot.docs[0].data().groupIdList)
+        setGroupIdList(snapShot.docs[0].data().groupIdList)
+        setContactIdList(snapShot.docs[0].data().contactIdList)
         setDocUserId(snapShot.docs[0].id)
+        snapShot.docs[0].data().contactIdList.forEach(i => {
+          firebase.firestore().collection('contacts').doc(i).onSnapshot({
+            includeMetadataChanges: false
+          }, doc => {
+            const payload = {
+              id: doc.id,
+              ...doc.data()
+            }
+            setContactList(prevState => {
+              const chatIndex = prevState.findIndex(chat => chat.id === payload.id)
+              if (~chatIndex) {
+                prevState[chatIndex] = payload
+                return [...prevState]
+              } else {
+                prevState.push(payload)
+                return [...prevState]
+              }
+            })
+          })
+        })
         snapShot.docs[0].data().groupIdList.forEach(i => {
           firebase.firestore().collection('groups').doc(i).onSnapshot({
             includeMetadataChanges: false
@@ -136,15 +164,13 @@ export const FirebaseState = ({ children }) => {
               id: doc.id,
               ...doc.data()
             }
-            setGroupsList(prevState => {
-              const groupIndex = prevState.findIndex(group => group.id === payload.id)
-              if (~groupIndex) {
-                prevState[groupIndex] = payload
-                prevState.sort((a, b) => b.lastMessageCreatedAt.seconds - a.lastMessageCreatedAt.seconds)
+            setGroupList(prevState => {
+              const chatIndex = prevState.findIndex(chat => chat.id === payload.id)
+              if (~chatIndex) {
+                prevState[chatIndex] = payload
                 return [...prevState]
               } else {
                 prevState.push(payload)
-                prevState.sort((a, b) => b.lastMessageCreatedAt.seconds - a.lastMessageCreatedAt.seconds)
                 return [...prevState]
               }
             })
@@ -154,57 +180,55 @@ export const FirebaseState = ({ children }) => {
   }
 
   const addNewGroup = async (name) => {
-    let existedGroup = await firebase.firestore().collection('groups').where('name', '==', name).get()
-    if (existedGroup.empty) {
-      let createdGroupId;
-      firebase
-        .firestore()
-        .collection('groups')
-        .add({
-          name,
-          lastMessage: '',
-          lastMessageCreatedAt: null,
-          searchKeywords: createKeywords(name),
-          logo: null,
-          creatorId: docUserId
-        })
-        .then(doc => createdGroupId = doc.id)
-        .then(() => {
-          firebase
-            .firestore()
-            .collection('users')
-            .doc(docUserId)
-            .update({
-              groupIdList: [...groupsIdList, createdGroupId]
-            })
-        })
-    } else alert('Group exists')
+    let createdGroupId;
+    firebase
+      .firestore()
+      .collection('groups')
+      .add({
+        name,
+        lastMessage: '',
+        lastMessageCreatedAt: null,
+        searchKeywords: createKeywords(name),
+        logo: null,
+        creatorId: docUserId
+      })
+      .then(doc => createdGroupId = doc.id)
+      .then(() => {
+        firebase
+          .firestore()
+          .collection('users')
+          .doc(docUserId)
+          .update({
+            groupIdList: [...groupIdList, createdGroupId]
+          })
+      })
   }
 
-  const addDialog = async (userId, name) => {
-    let existedGroup = await firebase.firestore().collection('groups').where('name', '==', name).get()
-    if (existedGroup.empty) {
-      let createdGroupId;
-      firebase
-        .firestore()
-        .collection('groups')
-        .add({
-          name,
-          lastMessage: '',
-          searchKeywords: createKeywords(name),
-          creatorId: docUserId
-        })
-        .then(doc => createdGroupId = doc.id)
-        .then(() => {
-          firebase
-            .firestore()
-            .collection('users')
-            .doc(docUserId)
-            .update({
-              groupIdList: [...groupsIdList, createdGroupId]
-            })
-        })
-    } else alert('Group exists')
+  const addContact = async (friend) => {
+    let createdChatId;
+    firebase
+      .firestore()
+      .collection('contacts')
+      .add({
+        uName1: currentUser.displayName,
+        uName2: friend.name,
+        uid1: docUserId,
+        uid2: friend.id, 
+        logo1: currentUser.photoURL,
+        logo2: friend.logo,
+        lastMessage: '',
+        lastMessageCreatedAt: null,
+      })
+      .then(doc => createdChatId = doc.id)
+      .then(() => {
+        firebase
+          .firestore()
+          .collection('users')
+          .doc(docUserId)
+          .update({
+            contactIdList: [...contactIdList, createdChatId]
+          })
+      })
   }
 
   const addGroupToList = (id) => {
@@ -213,12 +237,12 @@ export const FirebaseState = ({ children }) => {
       .collection('users')
       .doc(docUserId)
       .update({
-        groupIdList: [...groupsIdList, id]
+        groupIdList: [...groupIdList, id]
       })
   }
 
-  const fetchMessages = (groupId) => {
-    firebase.firestore().collection('messages').where('groupId', '==', groupId).orderBy('createdAt', 'asc')
+  const fetchMessages = (chatId) => {
+    firebase.firestore().collection('messages').where('chatId', '==', chatId).orderBy('createdAt', 'asc')
       .onSnapshot(function (querySnapshot) {
         const payload = []
         querySnapshot.forEach(function (doc) {
@@ -231,21 +255,21 @@ export const FirebaseState = ({ children }) => {
       });
   }
 
-  const addMessage = async ({ text, groupId, userId, userName }) => {
+  const addMessage = async ({ text, chatId, userId, userName, colName }) => {
     firebase
       .firestore()
       .collection('messages')
       .add({
         createdAt: new Date(),
         text,
-        groupId,
+        chatId,
         userId,
         userName
       })
     firebase
       .firestore()
-      .collection('groups')
-      .doc(groupId)
+      .collection(colName)
+      .doc(chatId)
       .update({
         lastMessageCreatedAt: new Date(),
         lastMessage: text
@@ -255,11 +279,13 @@ export const FirebaseState = ({ children }) => {
   return (
     <FirebaseContext.Provider value={{
       currentUser, searchResult, potencialFriends,
-      addNewGroup, addGroupToList, loadGroupList, fetchMessages, selectGroup, addMessage, signIn, signOut, signUp, loadSearchResult,
-      groupsList,
-      groupsIdList,
+      addNewGroup, addGroupToList, addContact, loadChatList, fetchMessages, selectChat, addMessage, signIn, signOut, signUp, loadSearchResult,
+      groupList,
+      contactList,
+      groupIdList,
+      docUserId,
       messages,
-      currentGroup,
+      currentChat,
 
       isShowNewGroupModal,
       isShowSettingsModal,

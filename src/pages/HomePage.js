@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { GroupsList } from '../components/GroupsList';
+import { ChatList } from '../components/ChatList'
 import { MessageBoard } from '../components/MessageBoard';
 import { NewMessage } from '../components/NewMessage';
 import { Search } from '../components/Search';
@@ -14,12 +14,12 @@ import { GroupInfo } from '../components/GroupInfo';
 
 export const HomePage = () => {
 
-  const { searchResult, currentGroup, groupsIdList } = useContext(FirebaseContext)
+  const { searchResult, currentChat, groupsIdList } = useContext(FirebaseContext)
   const [isInList, setIsInList] = useState(true)
 
   const checkGroup = () => {
-    if (!currentGroup.id) return
-    const groupAdded = groupsIdList.find(id => id === currentGroup.id)
+    if (!currentChat.id) return
+    const groupAdded = groupsIdList.find(id => id === currentChat.id)
     if (groupAdded) {
       setIsInList(true)
     } else {
@@ -30,7 +30,7 @@ export const HomePage = () => {
   useEffect(() => {
     checkGroup()
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentGroup, groupsIdList])
+  }, [currentChat, groupsIdList])
 
   return (
     <div className="relative" >
@@ -42,7 +42,7 @@ export const HomePage = () => {
         <div className="w-1/5">
           <Search />
           {!searchResult ? 
-            <GroupsList /> :
+            <ChatList /> :
             <SearchResultList />
           }
         </div>

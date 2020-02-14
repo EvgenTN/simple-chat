@@ -4,7 +4,7 @@ import { FirebaseContext } from '../context/firebase/firebaseContext'
 
 export const GroupInfo = () => {
 
-  const { currentGroup } = useContext(FirebaseContext)
+  const { currentChat } = useContext(FirebaseContext)
 
   // const loadFile = (e) => {
   //   let file = e.target.files[0]
@@ -26,7 +26,7 @@ export const GroupInfo = () => {
   
   return (
     <div>
-      <h3 className="text-center uppercase text-lg font-bold" >{currentGroup.name}</h3>
+      <h3 className="text-center uppercase text-lg font-bold" >{currentChat.name}</h3>
       {/* <div>
         <input className="" type="file" onChange={(e) => loadFile(e)} />
       </div>
