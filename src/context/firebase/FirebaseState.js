@@ -52,6 +52,7 @@ export const FirebaseState = ({ children }) => {
   const [contactIdList, setContactIdList] = useState([]);
   const [messages, setMessages] = useState([]);
   const [currentChat, setCurrentChat] = useState({});
+  const [searchContactList, setSearchContactList] = useState(null);
   const [searchResult, setSearchResult] = useState(null);
   const [potencialFriends, setPotencialFriends] = useState(null);
 
@@ -98,7 +99,15 @@ export const FirebaseState = ({ children }) => {
   }
 
   const findContacts = (searchValue) => {
-    
+    if (!searchValue) {
+      setSearchContactList(null)
+      return;
+    };
+    const filteredContacts = contactList.filter(contact => {
+      const targetName = contact.uid1 === docUserId ? contact.uName2 : contact.uName1
+      return targetName.includes(searchValue)
+    })
+    setSearchContactList(filteredContacts)
   }
 
   const loadSearchResult = (searchValue, collection) => {
@@ -278,8 +287,9 @@ export const FirebaseState = ({ children }) => {
 
   return (
     <FirebaseContext.Provider value={{
-      currentUser, searchResult, potencialFriends,
+      currentUser, searchResult, potencialFriends, searchContactList,
       addNewGroup, addGroupToList, addContact, loadChatList, fetchMessages, selectChat, addMessage, signIn, signOut, signUp, loadSearchResult,
+      findContacts,
       groupList,
       contactList,
       groupIdList,

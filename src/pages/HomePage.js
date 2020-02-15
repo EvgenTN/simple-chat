@@ -14,12 +14,12 @@ import { GroupInfo } from '../components/GroupInfo';
 
 export const HomePage = () => {
 
-  const { searchResult, currentChat, groupsIdList } = useContext(FirebaseContext)
+  const { searchResult, currentChat, groupIdList } = useContext(FirebaseContext)
   const [isInList, setIsInList] = useState(true)
 
   const checkGroup = () => {
     if (!currentChat.id) return
-    const groupAdded = groupsIdList.find(id => id === currentChat.id)
+    const groupAdded = groupIdList.find(id => id === currentChat.id)
     if (groupAdded) {
       setIsInList(true)
     } else {
@@ -30,7 +30,7 @@ export const HomePage = () => {
   useEffect(() => {
     checkGroup()
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentChat, groupsIdList])
+  }, [currentChat, groupIdList])
 
   return (
     <div className="relative" >

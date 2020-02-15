@@ -18,10 +18,9 @@ export const ChatList = () => {
   }, [currentUser])
 
   useEffect(() => {
-    const unsubscribe = collectChats()
-    return () => unsubscribe()
+    collectChats()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentUser])
+  }, [groupList, contactList])
 
 
   const selectChatFromList = (id) => {
