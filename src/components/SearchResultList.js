@@ -9,7 +9,7 @@ export const SearchResultList = () => {
 
   const collectChats = () => {
     const colList = searchContactList.concat(searchResult)
-    colList.sort((a, b) => b.lastMessageCreatedAt.seconds - a.lastMessageCreatedAt.seconds)
+    colList.sort((a, b) => b.lastMessageCreatedAt?.seconds - a.lastMessageCreatedAt?.seconds)
     setUnitedSearchResult(colList)
   }
 

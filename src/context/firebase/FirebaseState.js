@@ -222,7 +222,7 @@ export const FirebaseState = ({ children }) => {
         uName1: currentUser.displayName,
         uName2: friend.name,
         uid1: docUserId,
-        uid2: friend.id, 
+        uid2: friend.id,
         logo1: currentUser.photoURL,
         logo2: friend.logo,
         lastMessage: '',
@@ -234,6 +234,13 @@ export const FirebaseState = ({ children }) => {
           .firestore()
           .collection('users')
           .doc(docUserId)
+          .update({
+            contactIdList: [...contactIdList, createdChatId]
+          })
+        firebase
+          .firestore()
+          .collection('users')
+          .doc(friend.id)
           .update({
             contactIdList: [...contactIdList, createdChatId]
           })

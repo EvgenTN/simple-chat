@@ -8,7 +8,7 @@ export const ChatList = () => {
 
   const collectChats = () => {
     const colList = contactList.concat(groupList)
-    colList.sort((a, b) => b.lastMessageCreatedAt.seconds - a.lastMessageCreatedAt.seconds)
+    colList.sort((a, b) => b.lastMessageCreatedAt?.seconds - a.lastMessageCreatedAt?.seconds)
     setChatList(colList)
   }
 
