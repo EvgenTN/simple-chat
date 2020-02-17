@@ -95,6 +95,7 @@ export const FirebaseState = ({ children }) => {
   }
 
   const selectChat = (payload) => {
+    if (!payload) setCurrentChat({});
     setCurrentChat(payload)
   }
 

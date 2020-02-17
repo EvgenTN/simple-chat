@@ -1,15 +1,39 @@
-import React, { useContext, useRef } from 'react'
+import React, { useContext, useRef, useState, useEffect } from 'react'
 import { FirebaseContext } from '../context/firebase/firebaseContext'
 import { useOutsideListener } from '../services/useOutsideListener'
 import defaultLogo from '../assets/logo192.png'
 
 export const NewFriendModal = () => {
 
-  const { isShowNewFriendModal, toggleModal, loadSearchResult, addContact, potencialFriends } = useContext(FirebaseContext)
+  const { isShowNewFriendModal, toggleModal, docUserId, loadSearchResult, contactList, addContact, potencialFriends } = useContext(FirebaseContext)
+
+  const [modifiedPotFriends, setModifiedPotFriends] = useState([])
 
   const wrapRef = useRef(null);
   useOutsideListener(wrapRef, 'friend');
 
+  const filterPotFriends = () => {
+    setModifiedPotFriends([])
+    if (!potencialFriends) return;
+
+    const potIds = contactList.map(contact => {
+      if (contact.uid1 === docUserId) {
+        return contact.uid2
+      } else {
+        return contact.uid1
+      }
+    })
+    potIds.push(docUserId)
+    const idSet = new Set(potIds)
+    const modifiedList = potencialFriends.filter(friend => !idSet.has(friend.id))
+    setModifiedPotFriends(modifiedList)
+  }
+
+  useEffect(() => {
+    filterPotFriends()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [potencialFriends])
+  
   if (!isShowNewFriendModal) {
     return null
   }
@@ -27,7 +51,7 @@ export const NewFriendModal = () => {
           <input type="text" autoComplete="off" placeholder="Find friend..." autoFocus name="name" onChange={(e) => loadSearchResult(e.target.value, 'users')} className="appearance-none border rounded w-full py-2 px-3 mb-2 text-gray-700 leading-tight focus:outline-none focus:border-blue-500 hover:border-gray-700 border-gray-400" />
 
           {
-            potencialFriends && potencialFriends.map(item => (
+            modifiedPotFriends.map(item => (
               <div className="flex justify-between" key={item.id}>
                 <div className={`flex items-center justify-start`} key={item.id}>
                   <img className="w-1/6 h-10 rounded-full" src={item.logo ? item.logo : defaultLogo} alt="ava" />

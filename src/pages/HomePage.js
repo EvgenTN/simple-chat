@@ -19,7 +19,10 @@ export const HomePage = () => {
 
   const checkGroup = () => {
     if (!currentChat.id) return;
-    if (currentChat.uName1) return;
+    if (currentChat.uName1) {
+      setIsInList(true)
+      return
+    }
     const groupAdded = groupIdList.find(id => id === currentChat.id)
     if (groupAdded) {
       setIsInList(true)

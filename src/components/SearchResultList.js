@@ -20,7 +20,7 @@ export const SearchResultList = () => {
   
   const selectChatFromList = (id) => {
     fetchMessages(id)
-    selectChat(searchResult.find(group => group.id === id))
+    selectChat(unitedSearchResult.find(group => group.id === id))
   }
 
   const getOpponentName = (user) => {
