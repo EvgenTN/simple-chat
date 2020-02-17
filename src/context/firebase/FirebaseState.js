@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import firebase from '../../firebase'
+import firebase, { storage } from '../../firebase'
 import { FirebaseContext } from './firebaseContext'
 
 export const FirebaseState = ({ children }) => {
@@ -62,7 +62,7 @@ export const FirebaseState = ({ children }) => {
   }, [currentUser]);
 
   function getProfilePicUrl() {
-    return firebase.auth().currentUser.photoURL || '/images/placeholder-image.png';
+    return firebase.auth().currentUser.photoURL || '/placeholder-image.png';
   }
 
   const signIn = async ({ email, password }) => {
@@ -279,6 +279,7 @@ export const FirebaseState = ({ children }) => {
       .add({
         createdAt: new Date(),
         text,
+        profilePicUrl: getProfilePicUrl(),
         chatId,
         userId,
         userName
@@ -293,11 +294,22 @@ export const FirebaseState = ({ children }) => {
       })
   }
 
+  const uploadLogo = async (file) => {
+    let filePath = 'users/' + docUserId + '/' + file.name
+    storage.ref(filePath).put(file).then(function(snapshot) {
+      console.log('snapshot', snapshot)
+      snapshot.ref.getDownloadURL().then(url => {
+        console.log('url', url)
+      });
+    });
+  }
+
   return (
     <FirebaseContext.Provider value={{
       currentUser, searchResult, potencialFriends, searchContactList,
       addNewGroup, addGroupToList, addContact, loadChatList, fetchMessages, selectChat, addMessage, signIn, signOut, signUp, loadSearchResult,
       findContacts,
+      uploadLogo,
       groupList,
       contactList,
       groupIdList,

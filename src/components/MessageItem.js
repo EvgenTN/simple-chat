@@ -12,16 +12,21 @@ export const MessageItem = ({ message }) => {
   const align = currentUser.displayName === message.userName ? 'self-end' : 'self-start'
 
   return (
-    <div className={`${align} rounded border p-4 m-2 w-auto max-w-md`}>
-      <h3 className="flex justify-between items-center text-lg mb-2">
-        <p className="font-bold mr-2">
-          {message.userName}
+    <div className={`${align} flex rounded border py-4 pr-4 pl-2 m-2  w-auto max-w-md`}>
+      <div>
+        <img className="w-8 h-8 m-2" src={message.profilePicUrl} alt=""></img>
+      </div>
+      <div>
+        <h3 className="flex justify-between items-center text-lg mb-2">
+          <p className="font-bold mr-2">
+            {message.userName}
+          </p>
+          <p className="text-sm text-gray-600">{formatedDate()}</p>
+        </h3>
+        <p>
+          {message.text}
         </p>
-        <p className="text-sm text-gray-600">{formatedDate()}</p>
-      </h3>
-      <p>
-        {message.text}
-      </p>
+      </div>
     </div>
   )
 }
