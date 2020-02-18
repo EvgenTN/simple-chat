@@ -42,6 +42,12 @@ export const FirebaseState = ({ children }) => {
     return arrName
   }
 
+  // const db = () => {
+  //   return firebase.firestore()
+  // }
+
+  const db = firebase.firestore()
+
   // -------------------------------------------------------------------------------
 
   const [currentUser, setCurrentUser] = useState(null);
@@ -70,21 +76,48 @@ export const FirebaseState = ({ children }) => {
   }
 
   const signUp = async ({ email, password, name }) => {
+
+    // firebase.auth().createUserWithEmailAndPassword(email, password)
+    // .then(() => {
+    //   const user = firebase.auth().currentUser;
+    //   return user.updateProfile({
+    //     displayName: name
+    //   })
+    // })
+    // .then(() => {
+    //   return firebase
+    //   .firestore()
+    //   .collection('publicUsers')
+    //   .add({
+    //     name,
+    //     logo: null,
+    //   })    
+    // })
+    // .then(doc => {
+    //   console.log(doc.id)
+    // })
+
     await firebase.auth().createUserWithEmailAndPassword(email, password)
     const user = firebase.auth().currentUser;
     await user.updateProfile({
       displayName: name
     })
+    const docRef = await firebase
+      .firestore()
+      .collection('publicUsers')
+      .add({
+        name,
+        logo: null,
+      })
     await firebase
       .firestore()
       .collection('users')
-      .add({
+      .doc(docRef.id)
+      .set({
         email,
-        name,
         searchKeywords: createKeywords(name),
         groupIdList: [],
         contactIdList: [],
-        logo: null,
         background: null,
         language: null
       })
@@ -214,33 +247,29 @@ export const FirebaseState = ({ children }) => {
       })
   }
 
+  console.log(db.doc('publicUsers/' + docUserId))
+
   const addContact = async (friend) => {
     let createdChatId;
-    firebase
-      .firestore()
-      .collection('contacts')
+    db.collection('contacts')
       .add({
-        uName1: currentUser.displayName,
-        uName2: friend.name,
-        uid1: docUserId,
-        uid2: friend.id,
-        logo1: currentUser.photoURL,
-        logo2: friend.logo,
+        // uName1: currentUser.displayName,
+        // uName2: friend.name,
+        uid1: db.doc('publicUsers/' + docUserId),
+        uid2: db.doc('publicUsers/' + friend.id),
+        // logo1: currentUser.photoURL,
+        // logo2: friend.logo,
         lastMessage: '',
         lastMessageCreatedAt: null,
       })
       .then(doc => createdChatId = doc.id)
       .then(() => {
-        firebase
-          .firestore()
-          .collection('users')
+        db.collection('users')
           .doc(docUserId)
           .update({
             contactIdList: [...contactIdList, createdChatId]
           })
-        firebase
-          .firestore()
-          .collection('users')
+        db.collection('users')
           .doc(friend.id)
           .update({
             contactIdList: [...contactIdList, createdChatId]
@@ -279,10 +308,11 @@ export const FirebaseState = ({ children }) => {
       .add({
         createdAt: new Date(),
         text,
-        profilePicUrl: getProfilePicUrl(),
+        publicUser: db.doc('publicUsers/' + userId),
         chatId,
-        userId,
-        userName
+        // profilePicUrl: getProfilePicUrl(),
+        // userId,
+        // userName
       })
     firebase
       .firestore()
@@ -295,8 +325,6 @@ export const FirebaseState = ({ children }) => {
   }
 
   const uploadGroupLogo = (file) => {
-    console.log(currentChat)
-    console.log('f', file)
     let oldLogoRef
     if (currentChat.logo) {
       oldLogoRef = storage.refFromURL(currentChat.logo)
@@ -304,7 +332,7 @@ export const FirebaseState = ({ children }) => {
     let filePath = 'groups/' + currentChat.id + '/' + file.name;
     storage.ref(filePath).put(file).then(snapshot => {
       snapshot.ref.getDownloadURL().then(url => {
-        firebase.firestore().collection('groups').doc(currentChat.id).update({
+        db.collection('groups').doc(currentChat.id).update({
           logo: url
         }).then(() => {
           if (oldLogoRef) {
@@ -320,29 +348,40 @@ export const FirebaseState = ({ children }) => {
 
   const uploadLogo = async (file) => {
     const oldLogoRef = storage.refFromURL(getProfilePicUrl())
+    let createdUrl
     let filePath = 'users/' + docUserId + '/' + file.name
-    storage.ref(filePath).put(file).then(function (snapshot) {
-      snapshot.ref.getDownloadURL().then(url => {
-        currentUser.updateProfile({
+    storage.ref(filePath).put(file)
+      .then(snapshot => snapshot.ref.getDownloadURL())
+      .then(url => {
+        createdUrl = url
+        return currentUser.updateProfile({
           photoURL: url
-        }).then(() => {
-          firebase.firestore().collection('messages').where('userId', '==', docUserId)
-            .get().then(querySnapshot => {
-              querySnapshot.forEach(doc => {
-                firebase.firestore().collection('messages').doc(doc.id).update({
-                  profilePicUrl: url
-                })
-              });
-            });
-          oldLogoRef.delete().catch((e) => {
-            console.log('deletion error', e)
-          })
-          console.log('url', url)
-        }).catch((e) => {
-          console.log('error', e)
         })
-      });
-    });
+      })
+      .then(() => db.collection('publicUsers').doc(docUserId).update({
+        logo: createdUrl
+      }))
+      // .then(() => firebase.firestore().collection('messages').where('userId', '==', docUserId).get())
+      // .then(querySnapshot => {
+      //   return querySnapshot.forEach(doc => {
+      //     firebase.firestore().collection('messages').doc(doc.id).update({
+      //       profilePicUrl: createdUrl
+      //     })
+      //   })
+      // })
+      // .then(() => {
+      //   contactIdList.forEach(id => {
+      //     firebase.firestore().collection('contacts').doc(id).update({
+
+      //     })
+      //   })
+      // })
+      .then(() => oldLogoRef.delete())
+      .catch((e) => {
+        console.log('error', e)
+      })
+    // });
+    // });
   }
 
   return (
