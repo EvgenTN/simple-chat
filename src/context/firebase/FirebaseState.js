@@ -294,12 +294,53 @@ export const FirebaseState = ({ children }) => {
       })
   }
 
-  const uploadLogo = async (file) => {
-    let filePath = 'users/' + docUserId + '/' + file.name
-    storage.ref(filePath).put(file).then(function(snapshot) {
-      console.log('snapshot', snapshot)
+  const uploadGroupLogo = (file) => {
+    console.log(currentChat)
+    console.log('f', file)
+    let oldLogoRef
+    if (currentChat.logo) {
+      oldLogoRef = storage.refFromURL(currentChat.logo)
+    }
+    let filePath = 'groups/' + currentChat.id + '/' + file.name;
+    storage.ref(filePath).put(file).then(snapshot => {
       snapshot.ref.getDownloadURL().then(url => {
-        console.log('url', url)
+        firebase.firestore().collection('groups').doc(currentChat.id).update({
+          logo: url
+        }).then(() => {
+          if (oldLogoRef) {
+            oldLogoRef.delete().catch((e) => {
+              console.log('deletion error', e)
+            })
+          }
+        })
+      })
+    })
+
+  }
+
+  const uploadLogo = async (file) => {
+    const oldLogoRef = storage.refFromURL(getProfilePicUrl())
+    let filePath = 'users/' + docUserId + '/' + file.name
+    storage.ref(filePath).put(file).then(function (snapshot) {
+      snapshot.ref.getDownloadURL().then(url => {
+        currentUser.updateProfile({
+          photoURL: url
+        }).then(() => {
+          firebase.firestore().collection('messages').where('userId', '==', docUserId)
+            .get().then(querySnapshot => {
+              querySnapshot.forEach(doc => {
+                firebase.firestore().collection('messages').doc(doc.id).update({
+                  profilePicUrl: url
+                })
+              });
+            });
+          oldLogoRef.delete().catch((e) => {
+            console.log('deletion error', e)
+          })
+          console.log('url', url)
+        }).catch((e) => {
+          console.log('error', e)
+        })
       });
     });
   }
@@ -309,6 +350,7 @@ export const FirebaseState = ({ children }) => {
       currentUser, searchResult, potencialFriends, searchContactList,
       addNewGroup, addGroupToList, addContact, loadChatList, fetchMessages, selectChat, addMessage, signIn, signOut, signUp, loadSearchResult,
       findContacts,
+      uploadGroupLogo,
       uploadLogo,
       groupList,
       contactList,

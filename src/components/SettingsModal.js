@@ -31,7 +31,7 @@ export const SettingsModal = () => {
 
         {/* Add margin if you want to see some of the overlay behind the modal */}
         <div ref={wrapRef} className="modal-content py-4 text-left px-6 text-sm">
-          <h2 className="font-bold">Settings</h2>
+          <h2 className="font-bold mb-4 text-xl">Settings</h2>
 
           <div className="flex mb-2">
             <p className="mr-2">User name:</p>
