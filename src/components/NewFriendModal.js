@@ -1,7 +1,7 @@
 import React, { useContext, useRef, useState, useEffect } from 'react'
 import { FirebaseContext } from '../context/firebase/firebaseContext'
 import { useOutsideListener } from '../services/useOutsideListener'
-import defaultLogo from '../assets/logo192.png'
+import userPlaceholder from '../assets/user-placeholder.png'
 
 export const NewFriendModal = () => {
 
@@ -16,13 +16,7 @@ export const NewFriendModal = () => {
     setModifiedPotFriends([])
     if (!potencialFriends) return;
 
-    const potIds = contactList.map(contact => {
-      if (contact.uid1 === docUserId) {
-        return contact.uid2
-      } else {
-        return contact.uid1
-      }
-    })
+    const potIds = contactList.map(contact => contact.uid)
     potIds.push(docUserId)
     const idSet = new Set(potIds)
     const modifiedList = potencialFriends.filter(friend => !idSet.has(friend.id))
@@ -53,8 +47,10 @@ export const NewFriendModal = () => {
           {
             modifiedPotFriends.map(item => (
               <div className="flex justify-between" key={item.id}>
-                <div className={`flex items-center justify-start`} key={item.id}>
-                  <img className="w-1/6 h-10 rounded-full" src={item.logo ? item.logo : defaultLogo} alt="ava" />
+                <div className="flex items-center flex-1" key={item.id}>
+                  <div className="w-1/6">
+                    <img className="w-8 h-8 rounded-full" src={item.logo ? item.logo : userPlaceholder} alt="ava" />
+                  </div>
                   <div className="text-sm w-5/6">
                     <p className="text-gray-900 pl-1 truncate">{item.name}</p>
                   </div>

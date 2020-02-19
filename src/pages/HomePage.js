@@ -19,7 +19,7 @@ export const HomePage = () => {
 
   const checkGroup = () => {
     if (!currentChat.id) return;
-    if (currentChat.uName1) {
+    if (currentChat.isContact) {
       setIsInList(true)
       return
     }
@@ -50,7 +50,7 @@ export const HomePage = () => {
             <SearchResultList />
           }
         </div>
-        <div className="w-3/5 flex flex-col justify-between">
+        <div className="w-3/5 flex flex-col justify-between  back-topography">
           <MessageBoard />
           {isInList ? 
             <NewMessage /> :

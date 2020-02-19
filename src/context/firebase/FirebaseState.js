@@ -3,6 +3,7 @@ import firebase, { storage } from '../../firebase'
 import { FirebaseContext } from './firebaseContext'
 
 export const FirebaseState = ({ children }) => {
+
   // ------------------------------ Пока пусть тут побудет -------------------------
 
   const [isShowNewGroupModal, setIsShowNewGroupModal] = useState(false);
@@ -25,10 +26,6 @@ export const FirebaseState = ({ children }) => {
     }
   }
 
-  // const toggleModal = () => {
-  //   setIsShowNewGroupModal(!isShowNewGroupModal)
-  // }
-
   const createKeywords = (name) => {
     const arrName = [];
     let curName = '';
@@ -42,13 +39,9 @@ export const FirebaseState = ({ children }) => {
     return arrName
   }
 
-  // const db = () => {
-  //   return firebase.firestore()
-  // }
-
-  const db = firebase.firestore()
-
   // -------------------------------------------------------------------------------
+
+  const db = (collection) => firebase.firestore().collection(collection);
 
   const [currentUser, setCurrentUser] = useState(null);
   const [docUserId, setDocUserId] = useState(null);
@@ -67,54 +60,27 @@ export const FirebaseState = ({ children }) => {
     return () => unsubscribe()
   }, [currentUser]);
 
-  function getProfilePicUrl() {
-    return firebase.auth().currentUser.photoURL || '/placeholder-image.png';
-  }
-
   const signIn = async ({ email, password }) => {
     await firebase.auth().signInWithEmailAndPassword(email, password)
   }
 
   const signUp = async ({ email, password, name }) => {
-
-    // firebase.auth().createUserWithEmailAndPassword(email, password)
-    // .then(() => {
-    //   const user = firebase.auth().currentUser;
-    //   return user.updateProfile({
-    //     displayName: name
-    //   })
-    // })
-    // .then(() => {
-    //   return firebase
-    //   .firestore()
-    //   .collection('publicUsers')
-    //   .add({
-    //     name,
-    //     logo: null,
-    //   })    
-    // })
-    // .then(doc => {
-    //   console.log(doc.id)
-    // })
-
     await firebase.auth().createUserWithEmailAndPassword(email, password)
     const user = firebase.auth().currentUser;
     await user.updateProfile({
       displayName: name
     })
-    const docRef = await firebase
-      .firestore()
-      .collection('publicUsers')
+    const docRef = await db('publicUsers')
       .add({
         name,
         logo: null,
       })
-    await firebase
-      .firestore()
-      .collection('users')
+    await db('users')
       .doc(docRef.id)
       .set({
         email,
+        name,
+        logo: null,
         searchKeywords: createKeywords(name),
         groupIdList: [],
         contactIdList: [],
@@ -138,8 +104,7 @@ export const FirebaseState = ({ children }) => {
       return;
     };
     const filteredContacts = contactList.filter(contact => {
-      const targetName = contact.uid1 === docUserId ? contact.uName2 : contact.uName1
-      return targetName.includes(searchValue)
+      return contact.name.includes(searchValue)
     })
     setSearchContactList(filteredContacts)
   }
@@ -152,7 +117,7 @@ export const FirebaseState = ({ children }) => {
     };
     if (collection === 'groups') setSearchResult([])
     if (collection === 'users') setPotencialFriends([])
-    firebase.firestore().collection(collection).where('searchKeywords', 'array-contains', searchValue)
+    db(collection).where('searchKeywords', 'array-contains', searchValue)
       .onSnapshot(snapShot => {
         const result = [];
         if (snapShot.empty) return;
@@ -173,18 +138,28 @@ export const FirebaseState = ({ children }) => {
     setMessages([])
     setCurrentChat({})
     setSearchResult(null)
-    firebase.firestore().collection('users').where('email', '==', user.email)
+    db('users').where('email', '==', user.email)
       .onSnapshot(snapShot => {
         if (!snapShot.docs.length) return;
         setGroupIdList(snapShot.docs[0].data().groupIdList)
         setContactIdList(snapShot.docs[0].data().contactIdList)
         setDocUserId(snapShot.docs[0].id)
         snapShot.docs[0].data().contactIdList.forEach(i => {
-          firebase.firestore().collection('contacts').doc(i).onSnapshot({
+          db('contacts').doc(i).onSnapshot({
             includeMetadataChanges: false
-          }, doc => {
+          }, async doc => {
+            let refObj
+            if (doc.data()['uid1'].id === snapShot.docs[0].id) {
+              refObj = await doc.data()['uid2'].get()
+            } else {
+              refObj = await doc.data()['uid1'].get()
+            }
             const payload = {
               id: doc.id,
+              name: refObj.data()['name'],
+              logo: refObj.data()['logo'],
+              uid: refObj.id,
+              isContact: true,
               ...doc.data()
             }
             setContactList(prevState => {
@@ -200,7 +175,7 @@ export const FirebaseState = ({ children }) => {
           })
         })
         snapShot.docs[0].data().groupIdList.forEach(i => {
-          firebase.firestore().collection('groups').doc(i).onSnapshot({
+          db('groups').doc(i).onSnapshot({
             includeMetadataChanges: false
           }, doc => {
             const payload = {
@@ -224,9 +199,7 @@ export const FirebaseState = ({ children }) => {
 
   const addNewGroup = async (name) => {
     let createdGroupId;
-    firebase
-      .firestore()
-      .collection('groups')
+    db('groups')
       .add({
         name,
         lastMessage: '',
@@ -237,9 +210,7 @@ export const FirebaseState = ({ children }) => {
       })
       .then(doc => createdGroupId = doc.id)
       .then(() => {
-        firebase
-          .firestore()
-          .collection('users')
+        db('users')
           .doc(docUserId)
           .update({
             groupIdList: [...groupIdList, createdGroupId]
@@ -247,29 +218,23 @@ export const FirebaseState = ({ children }) => {
       })
   }
 
-  console.log(db.doc('publicUsers/' + docUserId))
-
   const addContact = async (friend) => {
     let createdChatId;
-    db.collection('contacts')
+    db('contacts')
       .add({
-        // uName1: currentUser.displayName,
-        // uName2: friend.name,
-        uid1: db.doc('publicUsers/' + docUserId),
-        uid2: db.doc('publicUsers/' + friend.id),
-        // logo1: currentUser.photoURL,
-        // logo2: friend.logo,
+        uid1: db('publicUsers').doc(docUserId),
+        uid2: db('publicUsers').doc(friend.id),
         lastMessage: '',
         lastMessageCreatedAt: null,
       })
       .then(doc => createdChatId = doc.id)
       .then(() => {
-        db.collection('users')
+        db('users')
           .doc(docUserId)
           .update({
             contactIdList: [...contactIdList, createdChatId]
           })
-        db.collection('users')
+        db('users')
           .doc(friend.id)
           .update({
             contactIdList: [...contactIdList, createdChatId]
@@ -278,9 +243,7 @@ export const FirebaseState = ({ children }) => {
   }
 
   const addGroupToList = (id) => {
-    firebase
-      .firestore()
-      .collection('users')
+    db('users')
       .doc(docUserId)
       .update({
         groupIdList: [...groupIdList, id]
@@ -288,35 +251,30 @@ export const FirebaseState = ({ children }) => {
   }
 
   const fetchMessages = (chatId) => {
-    firebase.firestore().collection('messages').where('chatId', '==', chatId).orderBy('createdAt', 'asc')
-      .onSnapshot(function (querySnapshot) {
+    db('messages').where('chatId', '==', chatId).orderBy('createdAt', 'asc')
+      .onSnapshot(querySnapshot => {
         const payload = []
-        querySnapshot.forEach(function (doc) {
+        querySnapshot.forEach(doc => {
           payload.push({
             id: doc.id,
             ...doc.data()
           });
-        });
+        })
         setMessages(payload)
       });
   }
 
   const addMessage = async ({ text, chatId, userId, userName, colName }) => {
-    firebase
-      .firestore()
-      .collection('messages')
+    db('messages')
       .add({
         createdAt: new Date(),
         text,
-        publicUser: db.doc('publicUsers/' + userId),
+        userName,
+        userLogo: firebase.auth().currentUser.photoURL,
+        userId,
         chatId,
-        // profilePicUrl: getProfilePicUrl(),
-        // userId,
-        // userName
       })
-    firebase
-      .firestore()
-      .collection(colName)
+    db(colName)
       .doc(chatId)
       .update({
         lastMessageCreatedAt: new Date(),
@@ -324,64 +282,39 @@ export const FirebaseState = ({ children }) => {
       })
   }
 
-  const uploadGroupLogo = (file) => {
-    let oldLogoRef
-    if (currentChat.logo) {
-      oldLogoRef = storage.refFromURL(currentChat.logo)
+  const uploadGroupLogo = async (file) => {
+    try {
+      let oldLogoRef
+      if (currentChat.logo) {
+        oldLogoRef = storage.refFromURL(currentChat.logo)
+      }
+      let filePath = 'groups/' + currentChat.id + '/' + file.name;
+      const snapshot = await storage.ref(filePath).put(file)
+      const url = await snapshot.ref.getDownloadURL()
+      await db('groups').doc(currentChat.id).update({ logo: url })
+      if (oldLogoRef) {
+        oldLogoRef.delete()
+      }
     }
-    let filePath = 'groups/' + currentChat.id + '/' + file.name;
-    storage.ref(filePath).put(file).then(snapshot => {
-      snapshot.ref.getDownloadURL().then(url => {
-        db.collection('groups').doc(currentChat.id).update({
-          logo: url
-        }).then(() => {
-          if (oldLogoRef) {
-            oldLogoRef.delete().catch((e) => {
-              console.log('deletion error', e)
-            })
-          }
-        })
-      })
-    })
-
+    catch (e) {
+      console.log('error', e)
+    }
   }
 
   const uploadLogo = async (file) => {
-    const oldLogoRef = storage.refFromURL(getProfilePicUrl())
-    let createdUrl
-    let filePath = 'users/' + docUserId + '/' + file.name
-    storage.ref(filePath).put(file)
-      .then(snapshot => snapshot.ref.getDownloadURL())
-      .then(url => {
-        createdUrl = url
-        return currentUser.updateProfile({
-          photoURL: url
-        })
-      })
-      .then(() => db.collection('publicUsers').doc(docUserId).update({
-        logo: createdUrl
-      }))
-      // .then(() => firebase.firestore().collection('messages').where('userId', '==', docUserId).get())
-      // .then(querySnapshot => {
-      //   return querySnapshot.forEach(doc => {
-      //     firebase.firestore().collection('messages').doc(doc.id).update({
-      //       profilePicUrl: createdUrl
-      //     })
-      //   })
-      // })
-      // .then(() => {
-      //   contactIdList.forEach(id => {
-      //     firebase.firestore().collection('contacts').doc(id).update({
-
-      //     })
-      //   })
-      // })
-      .then(() => oldLogoRef.delete())
-      .catch((e) => {
-        console.log('error', e)
-      })
-    // });
-    // });
+    try {
+      const oldLogoRef = currentUser.photoURL ? storage.refFromURL(firebase.auth().currentUser.photoURL) : null
+      let filePath = 'users/' + docUserId + '/' + file.name
+      const snapshot = await storage.ref(filePath).put(file)
+      const url = await snapshot.ref.getDownloadURL()
+      await currentUser.updateProfile({ photoURL: url })
+      await db('publicUsers').doc(docUserId).update({ logo: url })
+      await db('users').doc(docUserId).update({ logo: url })
+      if (oldLogoRef) oldLogoRef.delete();
+    }
+    catch (e) {
+      console.log('error', e)
+    }
   }
 
   return (

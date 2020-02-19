@@ -1,5 +1,7 @@
 import React, { useContext } from 'react'
 import { FirebaseContext } from '../context/firebase/firebaseContext'
+import userPlaceholder from '../assets/user-placeholder.png'
+
 
 export const MessageItem = ({ message }) => {
 
@@ -14,7 +16,7 @@ export const MessageItem = ({ message }) => {
   return (
     <div className={`${align} flex rounded border bg-white py-4 pr-4 pl-2 m-2  w-auto max-w-md`}>
       <div>
-        <img className="w-8 h-8 m-2 rounded-full" src={message.profilePicUrl} alt=""></img>
+        <img className="w-8 h-8 m-2 rounded-full" src={message.userLogo ? message.userLogo : userPlaceholder} alt=""></img>
       </div>
       <div>
         <h3 className="flex justify-between items-center text-lg mb-2">
