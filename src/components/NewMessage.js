@@ -16,7 +16,7 @@ export const NewMessage = () => {
       chatId: currentChat.id,
       userId: docUserId,
       userName: currentUser.displayName,
-      colName: currentChat.name ? 'groups' : 'contacts'
+      colName: currentChat.isContact ? 'contacts' : 'groups',
     }
     addMessage(payload).then(
       setNewMessage('')

@@ -89,8 +89,11 @@ export const FirebaseState = ({ children }) => {
       })
   }
 
-  const signOut = () => {
-    firebase.auth().signOut()
+  const signOut = async () => {
+    await firebase.auth().signOut()
+    setPotencialFriends(null)
+    setSearchResult(null)
+    setSearchContactList(null)
   }
 
   const selectChat = (payload) => {
@@ -219,26 +222,21 @@ export const FirebaseState = ({ children }) => {
   }
 
   const addContact = async (friend) => {
-    let createdChatId;
-    db('contacts')
-      .add({
-        uid1: db('publicUsers').doc(docUserId),
-        uid2: db('publicUsers').doc(friend.id),
-        lastMessage: '',
-        lastMessageCreatedAt: null,
+    const doc = await db('contacts').add({
+      uid1: db('publicUsers').doc(docUserId),
+      uid2: db('publicUsers').doc(friend.id),
+      lastMessage: '',
+      lastMessageCreatedAt: null,
+    })
+    db('users')
+      .doc(docUserId)
+      .update({
+        contactIdList: firebase.firestore.FieldValue.arrayUnion(doc.id)
       })
-      .then(doc => createdChatId = doc.id)
-      .then(() => {
-        db('users')
-          .doc(docUserId)
-          .update({
-            contactIdList: [...contactIdList, createdChatId]
-          })
-        db('users')
-          .doc(friend.id)
-          .update({
-            contactIdList: [...contactIdList, createdChatId]
-          })
+    db('users')
+      .doc(friend.id)
+      .update({
+        contactIdList: firebase.firestore.FieldValue.arrayUnion(doc.id)
       })
   }
 
@@ -310,11 +308,73 @@ export const FirebaseState = ({ children }) => {
       await currentUser.updateProfile({ photoURL: url })
       await db('publicUsers').doc(docUserId).update({ logo: url })
       await db('users').doc(docUserId).update({ logo: url })
+      await db('messages').where('userId', '==', docUserId).get().then(userMessages => {
+        userMessages.docs.forEach(doc => {
+          doc.ref.update({
+            userLogo: url
+          })
+        })
+      })
       if (oldLogoRef) oldLogoRef.delete();
     }
     catch (e) {
       console.log('error', e)
     }
+  }
+
+  const changeDisplayName = async (name) => {
+    await currentUser.updateProfile({
+      displayName: name
+    })
+    db('publicUsers').doc(docUserId).update({
+      name,
+    })
+    db('users').doc(docUserId).update({
+      name,
+    })
+    db('messages').where('userId', '==', docUserId).get().then(userMessages => {
+      userMessages.docs.forEach(doc => {
+        doc.ref.update({
+          userName: name
+        })
+      })
+    })
+  }
+
+  const changeUserPassword = (newPass) => {
+    currentUser.updatePassword(newPass).then(() => {
+      alert('password updated!')
+    }).catch(e => alert(e))
+  }
+
+  const sendCodeToResetPassword = (email) => {
+    firebase.auth().sendPasswordResetEmail(email)
+      .then(function () {
+        // Password reset email sent.
+      })
+      .catch(function (error) {
+        // Error occurred. Inspect error.code.
+      });
+  }
+
+  const changePasswordAfterReset = (resetCode, newPass) => {
+    firebase.auth().confirmPasswordReset(resetCode, newPass)
+      .then(() => {
+        // Password resets successfully.
+      })
+      .catch((e) => {
+        // Error occurred. Inspect error.code.
+      });
+  }
+
+  const deleteUser = () => {
+    currentUser.delete()
+      .then(() => {
+        // no more user
+      })
+      .catch((e) => {
+        // are you immortal???
+      })
   }
 
   return (
@@ -324,6 +384,8 @@ export const FirebaseState = ({ children }) => {
       findContacts,
       uploadGroupLogo,
       uploadLogo,
+      changeDisplayName,
+      changeUserPassword,
       groupList,
       contactList,
       groupIdList,

@@ -26,7 +26,7 @@ export const NewFriendModal = () => {
   useEffect(() => {
     filterPotFriends()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [potencialFriends])
+  }, [potencialFriends, contactList])
   
   if (!isShowNewFriendModal) {
     return null
@@ -41,7 +41,7 @@ export const NewFriendModal = () => {
         {/* Add margin if you want to see some of the overlay behind the modal */}
         <div ref={wrapRef} className="modal-content py-4 text-left px-6">
 
-          <label htmlFor="name" className="text-sm block font-bold  pt-2">Add friend</label>
+          <label htmlFor="name" className="text-sm block font-bold  pt-2 pb-1">Add friend</label>
           <input type="text" autoComplete="off" placeholder="Find friend..." autoFocus name="name" onChange={(e) => loadSearchResult(e.target.value, 'users')} className="appearance-none border rounded w-full py-2 px-3 mb-2 text-gray-700 leading-tight focus:outline-none focus:border-blue-500 hover:border-gray-700 border-gray-400" />
 
           {

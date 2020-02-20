@@ -7,11 +7,14 @@ export const GroupInfo = () => {
   const { currentChat, uploadGroupLogo } = useContext(FirebaseContext)
 
   if (!currentChat.id) return null;
-  
+
   return (
     <div>
       <h3 className="text-center uppercase text-lg font-bold" >{currentChat.name}</h3>
-      <FileInput uploadFn={uploadGroupLogo} />
+      {
+        !currentChat.isContact &&
+        <FileInput uploadFn={uploadGroupLogo} />
+      }
     </div>
   )
 }

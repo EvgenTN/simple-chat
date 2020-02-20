@@ -15,15 +15,21 @@ export const FileInput = ({ uploadFn }) => {
     setChosenFile(e.target.files[0])
   }
 
+  const selectFile = () => {
+    uploadFn(chosenFile).then(() => {
+      setChosenFile(null)
+    })
+  }
+
   return (
     <div>
       <input type="file" ref={fileRef} onChange={e => putFile(e)} className="hidden" />
-      <button onClick={addFile} className="bg-green-400 px-2 py-1 text-sm rounded m-1 text-white" >Change logo</button>
+      <button onClick={addFile} className="bg-gray-100 px-2 py-1 text-sm rounded m-1 text-blue-900 border border-gray-400 hover:bg-gray-200" >Change logo</button>
       {
         chosenFile &&
         <div>
           <p>{chosenFile.name}</p>
-          <button className="p-1 focus:outline-none" onClick={() => uploadFn(chosenFile)}>
+          <button className="p-1 focus:outline-none" onClick={selectFile}>
             <svg className="w-6 h-6 fill-current text-green-500 hover:text-green-600" viewBox="0 0 24 24">
               <path d="M9,20.42L2.79,14.21L5.62,11.38L9,14.77L18.88,4.88L21.71,7.71L9,20.42Z" />
             </svg>
