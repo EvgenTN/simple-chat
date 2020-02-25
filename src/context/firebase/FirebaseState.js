@@ -61,7 +61,13 @@ export const FirebaseState = ({ children }) => {
   }, [currentUser]);
 
   const signIn = async ({ email, password }) => {
-    await firebase.auth().signInWithEmailAndPassword(email, password)
+    try {
+      const resp = await firebase.auth().signInWithEmailAndPassword(email, password)
+      console.log(resp)
+    }
+    catch (e) {
+      console.log('e', e)
+    }
   }
 
   const signUp = async ({ email, password, name }) => {
@@ -148,15 +154,13 @@ export const FirebaseState = ({ children }) => {
         setContactIdList(snapShot.docs[0].data().contactIdList)
         setDocUserId(snapShot.docs[0].id)
         snapShot.docs[0].data().contactIdList.forEach(i => {
-          db('contacts').doc(i).onSnapshot({
-            includeMetadataChanges: false
-          }, async doc => {
+          db('contacts').doc(i).onSnapshot(async doc => {
             let refObj
             if (doc.data()['uid1'].id === snapShot.docs[0].id) {
               refObj = await doc.data()['uid2'].get()
             } else {
               refObj = await doc.data()['uid1'].get()
-            }
+            }            
             const payload = {
               id: doc.id,
               name: refObj.data()['name'],
@@ -178,9 +182,7 @@ export const FirebaseState = ({ children }) => {
           })
         })
         snapShot.docs[0].data().groupIdList.forEach(i => {
-          db('groups').doc(i).onSnapshot({
-            includeMetadataChanges: false
-          }, doc => {
+          db('groups').doc(i).onSnapshot(doc => {
             const payload = {
               id: doc.id,
               ...doc.data()
